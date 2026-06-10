@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stack (Pila) — Cheatsheet | DSA en Ruby</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: rgba(20, 27, 45, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #3b82f6;
+      --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+      --accent: #ec4899;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --font-headings: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    .container { max-width: 900px; margin: 0 auto; }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .meta-tag {
+      display: inline-block;
+      background: var(--primary-gradient);
+      padding: 0.3rem 0.9rem;
+      border-radius: 50px;
+      font-family: var(--font-headings);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.8rem;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    h1 {
+      font-family: var(--font-headings);
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(to right, #ffffff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.3rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 300;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 680px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      break-inside: avoid;
+    }
+
+    .card-full {
+      grid-column: 1 / -1;
+    }
+
+    h2 {
+      font-family: var(--font-headings);
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h2 .icon { font-size: 1.1rem; }
+
+    h3 {
+      font-family: var(--font-headings);
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 1rem 0 0.5rem;
+      color: #93c5fd;
+    }
+
+    p, li { font-size: 0.95rem; font-weight: 300; color: var(--text-main); }
+    li { margin-bottom: 0.3rem; }
+
+    ul, ol { padding-left: 1.3rem; }
+
+    code {
+      font-family: var(--font-mono);
+      background: rgba(59, 130, 246, 0.15);
+      padding: 0.15rem 0.45rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #93c5fd;
+    }
+
+    pre {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 0.6rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: #e2e8f0;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.6rem 0;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    th {
+      font-family: var(--font-headings);
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td { font-weight: 300; }
+
+    .tag {
+      display: inline-block;
+      padding: 0.15rem 0.6rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: var(--font-headings);
+    }
+
+    .tag-blue { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+    .tag-green { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+    .tag-yellow { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+    .tag-pink { background: rgba(236, 72, 153, 0.2); color: #f9a8d4; }
+
+    .complexity {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .good { color: var(--success); }
+    .warn { color: var(--warning); }
+
+    strong { font-weight: 600; color: #ffffff; }
+
+    hr {
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin: 1.2rem 0;
+    }
+
+    @media print {
+      body { background: #fff; color: #1a1a2e; padding: 0; }
+      .card { background: #f8f9fa; border: 1px solid #e2e8f0; box-shadow: none; backdrop-filter: none; }
+      h1 { -webkit-text-fill-color: #1a1a2e; background: none; }
+      h2 .icon { display: none; }
+      h3 { color: #2563eb; }
+      code { background: #e2e8f0; color: #1e293b; }
+      pre { background: #f1f5f9; }
+      pre code { color: #1e293b; }
+      .tag-blue { background: #dbeafe; color: #1d4ed8; }
+      .tag-green { background: #d1fae5; color: #065f46; }
+      .tag-yellow { background: #fef3c7; color: #92400e; }
+      .tag-pink { background: #fce7f3; color: #9d174d; }
+      strong { color: #1a1a2e; }
+      .good { color: #059669; }
+      .warn { color: #d97706; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="meta-tag">Referencia Rapida</span>
+      <h1>Stack (Pila)</h1>
+      <p class="subtitle">Estructura LIFO — &uacute;ltimo en entrar, primero en salir</p>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h2><span class="icon">&#9733;</span> Operaciones</h2>
+        <table>
+          <tr><th>Operacion</th><th>Ruby</th><th>Complejidad</th></tr>
+          <tr><td>Push</td><td><code>stack &lt;&lt; x</code> o <code>stack.push(x)</code></td><td><span class="complexity good">O(1)</span></td></tr>
+          <tr><td>Pop</td><td><code>stack.pop</code></td><td><span class="complexity good">O(1)</span></td></tr>
+          <tr><td>Peek / Top</td><td><code>stack.last</code> o <code>stack[-1]</code></td><td><span class="complexity good">O(1)</span></td></tr>
+          <tr><td>Empty?</td><td><code>stack.empty?</code></td><td><span class="complexity good">O(1)</span></td></tr>
+          <tr><td>Size</td><td><code>stack.length</code> o <code>stack.size</code></td><td><span class="complexity good">O(1)</span></td></tr>
+        </table>
+        <p style="margin-top: 0.6rem; font-size: 0.85rem; color: var(--text-muted);">
+          En Ruby, un Array funciona como stack nativo: <code>push</code> / <code>&lt;&lt;</code> agregan al final, <code>pop</code> quita del final.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2><span class="icon">&#9881;</span> Patrones Clave</h2>
+        <ul>
+          <li><strong>Parsing / Validacion:</strong> emparejar simbolos, parentesis, brackets. Empujar opens, validar con pop.</li>
+          <li><strong>Two-Stack:</strong> stack principal + stack auxiliar (ej. Min Stack — guardar minimos en paralelo).</li>
+          <li><strong>Monotonic Stack:</strong> mantener stack ordenado (creciente/decreciente). Next Greater Element, Daily Temperatures.</li>
+          <li><strong>Evaluacion de expresiones:</strong> RPN, shunting-yard. Operandos al stack, operadores desempacan.</li>
+          <li><strong>Undo / Backtracking:</strong> historial de estados (navegador, editor de texto).</li>
+        </ul>
+      </div>
+
+      <div class="card card-full">
+        <h2><span class="icon">&#128736;</span> Implementacion desde Cero</h2>
+        <pre><code>class Stack
+  def initialize
+    @data = []
+  end
+
+  def push(val)
+    @data &lt;&lt; val
+  end
+
+  def pop
+    @data.pop
+  end
+
+  def peek
+    @data.last
+  end
+
+  def empty?
+    @data.empty?
+  end
+
+  def size
+    @data.length
+  end
+end</code></pre>
+      </div>
+
+      <div class="card">
+        <h2><span class="icon">&#128200;</span> Monotonic Stack (Decreciente)</h2>
+        <pre><code>def next_greater(arr)
+  stack = []
+  result = Array.new(arr.size, -1)
+
+  arr.each_with_index do |val, i|
+    while !stack.empty? && val > arr[stack.last]
+      idx = stack.pop
+      result[idx] = val
+    end
+    stack &lt;&lt; i
+  end
+
+  result
+end</code></pre>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
+          El stack guarda <strong>indices</strong>, no valores. Asi puedes asignar al resultado en la posicion correcta.
+        </p>
+      </div>
+
+      <div class="card card-full">
+        <h2><span class="icon">&#128218;</span> Problemas Clasicos</h2>
+        <table>
+          <tr><th>Problema</th><th>Dificultad</th><th>Patron</th><th>LeetCode</th></tr>
+          <tr>
+            <td>Valid Parentheses</td>
+            <td><span class="tag tag-green">Easy</span></td>
+            <td>Parsing con hash de pares</td>
+            <td><code>20</code></td>
+          </tr>
+          <tr>
+            <td>Min Stack</td>
+            <td><span class="tag tag-green">Easy</span></td>
+            <td>Two-Stack</td>
+            <td><code>155</code></td>
+          </tr>
+          <tr>
+            <td>Evaluate RPN</td>
+            <td><span class="tag tag-yellow">Medium</span></td>
+            <td>Stack de operandos</td>
+            <td><code>150</code></td>
+          </tr>
+          <tr>
+            <td>Daily Temperatures</td>
+            <td><span class="tag tag-yellow">Medium</span></td>
+            <td>Monotonic stack</td>
+            <td><code>739</code></td>
+          </tr>
+          <tr>
+            <td>Largest Rectangle in Histogram</td>
+            <td><span class="tag tag-pink">Hard</span></td>
+            <td>Monotonic stack + indices</td>
+            <td><code>84</code></td>
+          </tr>
+          <tr>
+            <td>Valid Stack Sequences</td>
+            <td><span class="tag tag-yellow">Medium</span></td>
+            <td>Simulacion con dos punteros</td>
+            <td><code>946</code></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2><span class="icon">&#128196;</span> Consejos de Entrevista</h2>
+        <ul>
+          <li>Menciona <strong>LIFO</strong> apenas veas un problema de anidamiento o "orden inverso"</li>
+          <li>Stack con indices (no valores) cuando necesites posiciones en el resultado</li>
+          <li>Si necesitas minimo/maximo O(1), piensa en two-stack</li>
+          <li>Array en Ruby <code>push</code>/<code>pop</code> son nativos y eficientes — no necesitas implementar nada</li>
+          <li>Pregunta si los valores pueden repetirse (afecta logica de Min Stack)</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2><span class="icon">&#128279;</span> Referencias</h2>
+        <ul>
+          <li><a href="https://visualgo.net/en/list" style="color: #93c5fd;">VisuAlgo — Stack visualization</a></li>
+          <li><a href="https://ruby-doc.org/core/Array.html" style="color: #93c5fd;">Ruby Array docs</a></li>
+          <li><a href="https://algo.monster/problems/stack_intro" style="color: #93c5fd;">AlgoMonster — Stack</a></li>
+          <li><a href="https://www.bigocheatsheet.com" style="color: #93c5fd;">Big-O Cheat Sheet</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

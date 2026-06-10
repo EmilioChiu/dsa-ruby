@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lección 0002: Monotonic Stacks y Daily Temperatures</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f4f7f6;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        h1, h2 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
+        code {
+            background: #e8ecef;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.9em;
+        }
+        .info { border-left: 4px solid #61afef; padding: 1rem; background: #f0f7ff; margin: 1rem 0; border-radius: 0 8px 8px 0; }
+        
+        /* Estilos de la Tabla de Simulación */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th { background-color: #2c3e50; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .current-step { background-color: #fff3cd !important; border: 2px solid #ffc107; }
+        .stack-item {
+            display: inline-block;
+            background: #61afef;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 4px;
+            font-weight: bold;
+        }
+        .ans-highlight { color: #e06c75; font-weight: bold; }
+        .pop-action { color: #e06c75; font-weight: bold; text-decoration: line-through; }
+        .push-action { color: #98c379; font-weight: bold; }
+        
+        .array-view {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .array-cell {
+            border: 2px solid #ccc;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .cell-index { font-size: 0.7em; color: #888; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Lección 0002: El Patrón de Monotonic Stack</h1>
+        <p>Has identificado correctamente el problema: las soluciones de fuerza bruta nos llevan a un tiempo <strong>O(n²)</strong>. En entrevistas, si ves "siguiente elemento más grande", tu cerebro debe gritar: <strong>¡Monotonic Stack!</strong></p>
+    </div>
+
+    <div class="card">
+        <h2>La Intuición: "La Sala de Espera"</h2>
+        <div class="info">
+            <strong>Regla de Oro:</strong> El Stack siempre guardará elementos en orden <strong>descendente</strong>. En cuanto llega una temperatura más alta que la del tope, ¡esa temperatura "libera" (pops) a los que están esperando!
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Simulación Paso a Paso</h2>
+        <p>Temperaturas: <code>[73, 74, 75, 71, 69, 72]</code></p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Iteración (i)</th>
+                    <th>Temp Actual</th>
+                    <th>Acción del Stack</th>
+                    <th>Stack (Índices)</th>
+                    <th>Resultado [ans]</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Inicio</td>
+                    <td>-</td>
+                    <td>Inicializar <code>ans</code> con 0s</td>
+                    <td><code>[]</code></td>
+                    <td><code>[0, 0, 0, 0, 0, 0]</code></td>
+                </tr>
+                <tr>
+                    <td>0</td>
+                    <td>73</td>
+                    <td><span class="push-action">Push 0</span></td>
+                    <td><code>[0]</code></td>
+                    <td><code>[0, 0, 0, 0, 0, 0]</code></td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>74</td>
+                    <td>74 > 73? SÍ. <span class="pop-action">Pop 0</span>.<br>ans[0] = 1 - 0 = <strong>1</strong>.<br><span class="push-action">Push 1</span></td>
+                    <td><code>[1]</code></td>
+                    <td><code>[<span class="ans-highlight">1</span>, 0, 0, 0, 0, 0]</code></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>75</td>
+                    <td>75 > 74? SÍ. <span class="pop-action">Pop 1</span>.<br>ans[1] = 2 - 1 = <strong>1</strong>.<br><span class="push-action">Push 2</span></td>
+                    <td><code>[2]</code></td>
+                    <td><code>[1, <span class="ans-highlight">1</span>, 0, 0, 0, 0]</code></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>71</td>
+                    <td>71 > 75? NO.<br><span class="push-action">Push 3</span></td>
+                    <td><code>[2, 3]</code></td>
+                    <td><code>[1, 1, 0, 0, 0, 0]</code></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>69</td>
+                    <td>69 > 71? NO.<br><span class="push-action">Push 4</span></td>
+                    <td><code>[2, 3, 4]</code></td>
+                    <td><code>[1, 1, 0, 0, 0, 0]</code></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>72</td>
+                    <td>
+                        72 > 69? SÍ. <span class="pop-action">Pop 4</span>. ans[4]=5-4=<strong>1</strong><br>
+                        72 > 71? SÍ. <span class="pop-action">Pop 3</span>. ans[3]=5-3=<strong>2</strong><br>
+                        72 > 75? NO.<br>
+                        <span class="push-action">Push 5</span>
+                    </td>
+                    <td><code>[2, 5]</code></td>
+                    <td><code>[1, 1, 0, <span class="ans-highlight">2</span>, <span class="ans-highlight">1</span>, 0]</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info" style="background: #fff3cd; border-color: #ffc107;">
+            <strong>Observación:</strong> Los índices que quedan en el stack (<code>2</code> y <code>5</code>) se quedan con <code>0</code> en el resultado porque nunca encontraron un día más caliente.
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Pseudocódigo para Ruby</h2>
+        <pre><code>
+def daily_temperatures(temperatures)
+  ans = Array.new(temperatures.length, 0)
+  stack = [] # Guardaremos ÍNDICES
+
+  temperatures.each_with_index do |t, i|
+    # Mientras haya alguien esperando Y la temp actual sea mayor...
+    while !stack.empty? && t > temperatures[stack.last]
+      prev_i = stack.pop
+      ans[prev_i] = i - prev_i
+    end
+    stack << i
+  end
+
+  ans
+end
+        </code></pre>
+    </div>
+
+    <div class="card">
+        <h2>Tu Turno</h2>
+        <p>Implementa esto en <code>week-04/day-3/practice/04_daily_temperatures.rb</code>.</p>
+        <p><strong>Pregunta de reflexión:</strong> ¿Por qué guardamos el índice en el stack en lugar del valor de la temperatura? (Pista: mira el cálculo de <code>ans[prev_i]</code>).</p>
+    </div>
+
+    <p style="text-align: center; color: #7f8c8d;">
+        <small>Refresca el navegador para ver los cambios en la lección.</small>
+    </p>
+</body>
+</html>

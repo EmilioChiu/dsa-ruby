@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lección 0001: Introducción a Stacks y LIFO | DSA en Ruby</title>
+  <!-- Google Fonts: Outfit (headings), Inter (body), JetBrains Mono (code) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: rgba(20, 27, 45, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #3b82f6;
+      --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+      --accent: #ec4899;
+      --success: #10b981;
+      --error: #ef4444;
+      --font-headings: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .meta-tag {
+      display: inline-block;
+      background: var(--primary-gradient);
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      font-family: var(--font-headings);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    h1 {
+      font-family: var(--font-headings);
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(to right, #ffffff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.15rem;
+      font-weight: 300;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+      animation: fadeInUp 0.8s ease-out both;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    h2 {
+      font-family: var(--font-headings);
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+      font-size: 1.05rem;
+      font-weight: 300;
+    }
+
+    strong {
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+      color: #f43f5e;
+    }
+
+    pre {
+      background: #07090e;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+      color: #38bdf8;
+      font-size: 0.95rem;
+    }
+
+    .code-comment {
+      color: #6b7280;
+      font-style: italic;
+    }
+
+    .code-keyword {
+      color: #f43f5e;
+    }
+
+    .code-builtin {
+      color: #fbbf24;
+    }
+
+    /* Interactive Visualizer */
+    .visualizer-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 600px) {
+      .visualizer-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .controls-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .btn {
+      font-family: var(--font-headings);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .visual-stack-wrapper {
+      background: rgba(0, 0, 0, 0.2);
+      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      height: 250px;
+      width: 150px;
+      margin: 0 auto;
+      position: relative;
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 10px;
+      gap: 8px;
+      overflow-y: hidden;
+    }
+
+    .stack-label {
+      text-align: center;
+      font-family: var(--font-headings);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      font-weight: 600;
+    }
+
+    .stack-node {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.5);
+      border-radius: 6px;
+      color: #ffffff;
+      width: 100%;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: bold;
+      animation: slideInDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+
+    .stack-node.popping {
+      animation: slideOutUp 0.3s ease-in both;
+    }
+
+    /* Quiz Styling */
+    .quiz-question {
+      margin-top: 1.5rem;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+
+    .quiz-option {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+    }
+
+    .quiz-option:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .quiz-option.correct {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: var(--success);
+      color: #a7f3d0;
+    }
+
+    .quiz-option.incorrect {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: var(--error);
+      color: #fca5a5;
+    }
+
+    .quiz-feedback {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      display: none;
+      font-size: 0.95rem;
+    }
+
+    .quiz-feedback.success {
+      background: rgba(16, 185, 129, 0.08);
+      border-left: 4px solid var(--success);
+      color: #a7f3d0;
+    }
+
+    .quiz-feedback.error {
+      background: rgba(239, 68, 68, 0.08);
+      border-left: 4px solid var(--error);
+      color: #fca5a5;
+    }
+
+    /* Complexity Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    th {
+      font-family: var(--font-headings);
+      color: #ffffff;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    td code {
+      color: #38bdf8;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 4rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-80px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideOutUp {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-100px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="meta-tag">Lección 0001</div>
+      <h1>Stacks (Pilas) y la estructura LIFO</h1>
+      <p class="subtitle">Semana 4, Día 3 &bull; Unidad de Linked Lists, Stacks y Queues</p>
+    </header>
+
+    <!-- 1. ¿Qué es un Stack? -->
+    <section class="card" style="animation-delay: 0.1s;">
+      <h2>1. El Concepto LIFO</h2>
+      <p>Un <strong>Stack</strong> (Pila) es una estructura de datos lineal y dinámica regida por el principio <strong>LIFO (Last-In, First-Out)</strong>: el último elemento en ser insertado es el primero en ser retirado.</p>
+      
+      <p>Imagina una pila física de platos de cocina. Colocas cada plato limpio encima del anterior (acción de <em>empujar</em> o <code>push</code>). Cuando vas a usar un plato, tomas obligatoriamente el plato que está arriba de todo (acción de <em>extraer</em> o <code>pop</code>), ya que retirar uno del fondo causaría un desastre conceptual y físico.</p>
+      
+      <p>Esta estructura es vital en computación. De hecho, el propio intérprete de Ruby la utiliza internamente (el <em>Call Stack</em> o pila de ejecución) para recordar dónde volver tras terminar de evaluar una función recursiva.</p>
+    </section>
+
+    <!-- 2. Visualizador Interactivo -->
+    <section class="card" style="animation-delay: 0.2s;">
+      <h2>2. Visualizador de Pila</h2>
+      <p>Interactúa con la pila para internalizar cómo se apilan y desapilan los elementos. Observa que solo tienes acceso inmediato al elemento superior.</p>
+      
+      <div class="visualizer-container">
+        <div class="controls-panel">
+          <button class="btn btn-primary" onclick="pushNode()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Push (Empujar)
+          </button>
+          <button class="btn btn-secondary" onclick="popNode()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+            Pop (Extraer)
+          </button>
+          <p style="font-size: 0.9rem; margin-top: 10px; line-height: 1.4;">
+            <strong>Top / Peek:</strong> Muestra el valor en el tope de la pila sin eliminarlo: 
+            <span id="peek-value" style="font-family: var(--font-mono); color: var(--accent); font-weight: bold;">[Pila Vacía]</span>
+          </p>
+        </div>
+        <div>
+          <div class="visual-stack-wrapper" id="visual-stack">
+            <!-- Nodes dynamically loaded -->
+          </div>
+          <div class="stack-label">Fondo de la Pila</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Implementación en Ruby -->
+    <section class="card" style="animation-delay: 0.3s;">
+      <h2>3. Implementación en Ruby</h2>
+      <p>En Ruby, no necesitamos construir una estructura compleja desde cero para tener un Stack básico, ya que la clase integrada <code style="color: #38bdf8;">Array</code> viene equipada con métodos altamente eficientes para este propósito.</p>
+      
+      <pre><code><span class="code-comment"># Inicializar una pila vacía</span>
+pila = []
+
+<span class="code-comment"># Push: Agregar elementos al tope (final del array) -> O(1)</span>
+pila.push(10)  <span class="code-comment"># => [10]</span>
+pila.push(20)  <span class="code-comment"># => [10, 20]</span>
+pila.push(30)  <span class="code-comment"># => [10, 20, 30]</span>
+
+<span class="code-comment"># Top / Peek: Ver el tope sin extraer -> O(1)</span>
+pila.last      <span class="code-comment"># => 30</span>
+
+<span class="code-comment"># Pop: Extraer el elemento del tope -> O(1)</span>
+elemento_extraido = pila.pop()  <span class="code-comment"># => 30</span>
+<span class="code-comment"># Ahora la pila queda como: [10, 20]</span></code></pre>
+
+      <h3>Complejidades de las Operaciones</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Operación</th>
+            <th>Complejidad Temporal</th>
+            <th>Complejidad Espacial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>push(x)</code></td>
+            <td><code>O(1)</code> (amortizado)</td>
+            <td><code>O(1)</code></td>
+          </tr>
+          <tr>
+            <td><code>pop()</code></td>
+            <td><code>O(1)</code></td>
+            <td><code>O(1)</code></td>
+          </tr>
+          <tr>
+            <td><code>top()</code> / <code>peek()</code></td>
+            <td><code>O(1)</code></td>
+            <td><code>O(1)</code></td>
+          </tr>
+          <tr>
+            <td>Búsqueda / Acceso arbitrario</td>
+            <td><code>O(n)</code></td>
+            <td><code>O(1)</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 4. Autoevaluación rápida -->
+    <section class="card" style="animation-delay: 0.4s;">
+      <h2>4. Desafío de Comprensión</h2>
+      <p>Responde a la siguiente pregunta técnica sobre los internals de Ruby para validar tu entendimiento:</p>
+      
+      <div class="quiz-question">
+        <p><strong>Pregunta:</strong> Si usamos un <code>Array</code> en Ruby como pila, ¿por qué es fundamental usar <code>push</code> y <code>pop</code> (que agregan/remueven al final) en lugar de <code>unshift</code> y <code>shift</code> (que agregan/remueven al inicio)?</p>
+        
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkAnswer(this, false, 'incorrect-1')">
+            <input type="radio" name="q1" id="opt-1" disabled>
+            <label for="opt-1" style="cursor: pointer; width: 100%;">No hay diferencia, ambos operan en tiempo constante O(1) en Ruby gracias a las optimizaciones del intérprete YARV.</label>
+          </div>
+          <div class="quiz-option" onclick="checkAnswer(this, true, 'correct-1')">
+            <input type="radio" name="q1" id="opt-2" disabled>
+            <label for="opt-2" style="cursor: pointer; width: 100%;">Porque remover o agregar al inicio (shift/unshift) fuerza a Ruby a desplazar físicamente todos los elementos restantes una posición en memoria, lo que toma tiempo O(n).</label>
+          </div>
+          <div class="quiz-option" onclick="checkAnswer(this, false, 'incorrect-2')">
+            <input type="radio" name="q1" id="opt-3" disabled>
+            <label for="opt-3" style="cursor: pointer; width: 100%;">Porque shift y unshift convierten internamente el Array en una lista enlazada, aumentando drásticamente el uso de memoria residual.</label>
+          </div>
+        </div>
+
+        <div id="quiz-feedback-box" class="quiz-feedback"></div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Siguiente paso: Abre y resuelve el ejercicio <a href="file:///Users/e.chiu/.course-manager/courses/dsa-ruby/week-04/day-3/practice/01_valid_parentheses.rb">01_valid_parentheses.rb</a> en tu editor.</p>
+      <p style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">
+        Para cualquier duda conceptual o ayuda con la práctica, pregúntame directamente por el chat.
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Visualizer Logic
+    const stackElement = document.getElementById('visual-stack');
+    const peekElement = document.getElementById('peek-value');
+    let stackData = [5, 12, 8];
+
+    function updateVisualStack() {
+      stackElement.innerHTML = '';
+      stackData.forEach(val => {
+        const node = document.createElement('div');
+        node.className = 'stack-node';
+        node.innerText = val;
+        stackElement.appendChild(node);
+      });
+
+      if (stackData.length > 0) {
+        peekElement.innerText = stackData[stackData.length - 1];
+      } else {
+        peekElement.innerText = '[Pila Vacía]';
+      }
+    }
+
+    function pushNode() {
+      if (stackData.length >= 5) {
+        alert("La pila de demostración está llena (máx 5 nodos). ¡Haz pop primero!");
+        return;
+      }
+      const randomVal = Math.floor(Math.random() * 99) + 1;
+      stackData.push(randomVal);
+      updateVisualStack();
+    }
+
+    function popNode() {
+      if (stackData.length === 0) {
+        alert("La pila está vacía. ¡No puedes hacer pop!");
+        return;
+      }
+      
+      const nodes = stackElement.getElementsByClassName('stack-node');
+      const topNode = nodes[nodes.length - 1];
+      if (topNode) {
+        topNode.classList.add('popping');
+        setTimeout(() => {
+          stackData.pop();
+          updateVisualStack();
+        }, 250);
+      }
+    }
+
+    // Initialize Stack
+    updateVisualStack();
+
+    // Quiz Logic
+    function checkAnswer(selectedOption, isCorrect, reasonKey) {
+      // Clear previous styles
+      const options = document.querySelectorAll('.quiz-option');
+      options.forEach(opt => {
+        opt.classList.remove('correct', 'incorrect');
+        opt.querySelector('input').checked = false;
+      });
+
+      // Highlight selected
+      selectedOption.classList.add(isCorrect ? 'correct' : 'incorrect');
+      selectedOption.querySelector('input').checked = true;
+
+      // Feedback
+      const feedbackBox = document.getElementById('quiz-feedback-box');
+      feedbackBox.className = 'quiz-feedback ' + (isCorrect ? 'success' : 'error');
+      feedbackBox.style.display = 'block';
+
+      if (isCorrect) {
+        feedbackBox.innerHTML = '<strong>¡Correcto!</strong> En Ruby, los arreglos se almacenan en posiciones de memoria contiguas. Al hacer un <code>shift</code> o <code>unshift</code>, se vacía o inserta la posición 0, forzando a la CPU a recorrer y mover cada uno de los elementos subsiguientes una casilla. <code>push</code> y <code>pop</code> operan en el extremo libre del arreglo, lo que toma tiempo constante <strong>O(1)</strong>.';
+      } else {
+        if (reasonKey === 'incorrect-1') {
+          feedbackBox.innerHTML = '<strong>Incorrecto.</strong> Aunque YARV optimiza el uso de memoria, no puede evitar el costo de reubicación física de elementos al alterar el inicio del arreglo. Ese reordenamiento requiere recorrer los elementos, resultando en O(n).';
+        } else {
+          feedbackBox.innerHTML = '<strong>Incorrecto.</strong> Ruby conserva la estructura de arreglo contiguo en memoria, no la transforma en una lista enlazada al usar shift/unshift. El costo es puramente de desplazamiento de memoria, O(n).';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
