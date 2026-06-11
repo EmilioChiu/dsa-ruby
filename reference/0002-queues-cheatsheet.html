@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Referencia: Queues (Colas) en Ruby</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.5; padding: 2rem; color: #333; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #eee; }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        th, td { border: 1px solid #ddd; padding: 0.8rem; text-align: left; }
+        th { background: #f8f9fa; }
+        code { background: #f4f4f4; padding: 0.2rem 0.4rem; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>Referencia: Queues (Colas)</h1>
+    <p>Una <strong>Queue</strong> es una estructura lineal que sigue el principio <strong>FIFO (First-In, First-Out)</strong>.</p>
+
+    <h2>Operaciones Principales</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Operación</th>
+                <th>Descripción</th>
+                <th>Complejidad (Ideal)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>enqueue(x)</code></td>
+                <td>Añade un elemento al final de la cola.</td>
+                <td>O(1)</td>
+            </tr>
+            <tr>
+                <td><code>dequeue()</code></td>
+                <td>Elimina y retorna el elemento al frente.</td>
+                <td>O(1)</td>
+            </tr>
+            <tr>
+                <td><code>peek() / front()</code></td>
+                <td>Retorna el elemento al frente sin eliminarlo.</td>
+                <td>O(1)</td>
+            </tr>
+            <tr>
+                <td><code>isEmpty()</code></td>
+                <td>Verifica si la cola no tiene elementos.</td>
+                <td>O(1)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Implementación en Ruby</h2>
+    <p>En Ruby, un <code>Array</code> puede actuar como Queue, pero <code>shift</code> es O(n):</p>
+    <pre><code>
+queue = []
+queue << 1          # Enqueue
+queue << 2
+front = queue.shift # Dequeue (Retorna 1, O(n))
+    </code></pre>
+
+    <h2>Patrones Comunes</h2>
+    <ul>
+        <li><strong>Two Stacks</strong>: Simular FIFO usando dos estructuras LIFO.</li>
+        <li><strong>Circular Buffer</strong>: Optimizar espacio usando un array de tamaño fijo y punteros <code>head</code> y <code>tail</code>.</li>
+        <li><strong>BFS</strong>: Uso fundamental para explorar nodos por nivel.</li>
+    </ul>
+</body>
+</html>

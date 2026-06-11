@@ -1,0 +1,769 @@
+{
+  "course": "DSA en Ruby - De Cero a Entrevistado",
+  "description": "Curso completo de Data Structures & Algorithms en Ruby orientado a preparación para entrevistas técnicas",
+  "duration_weeks": 12,
+  "total_sessions": 60,
+  "total_hours": 180,
+  "language": "Ruby",
+  "streak": 1,
+  "last_session": "2026-05-07T09:00:00-06:00",
+  "schedule_pattern": "Monday-Friday 9:00-12:00 CST",
+  "modules": [
+    {
+      "week": 1,
+      "theme": "Big-O, Arrays y Strings",
+      "milestones": [
+         {
+          "id": "w1d1",
+          "label": "Big-O notation",
+          "status": "completed",
+          "prerequisites": [],
+          "bloom_level": "Understand",
+          "topics": ["Complejidad temporal y espacial", "O(1), O(n), O(log n), O(n²), O(2ⁿ)"],
+          "practice_problems": [],
+          "evidence_path": "week-01/day-1",
+          "notes": "Analizar 10 algoritmos y clasificar su Big-O. PENDIENTE: Space Complexity antes de w1d2"
+        },
+        {
+           "id": "w1d2",
+           "label": "Arrays en Ruby",
+           "status": "completed",
+          "prerequisites": ["w1d1"],
+          "bloom_level": "Apply",
+          "topics": ["Array methods clave", "Manipulación in-place", "reverse, rotate, map, select"],
+          "practice_problems": ["Contains Duplicate", "Product of Array Except Self", "Squares of Sorted Array"],
+          "evidence_path": "week-01/day-2",
+          "notes": "Resolver: reverse, rotate, in-place operations"
+        },
+        {
+           "id": "w1d3",
+           "label": "Strings en Ruby",
+           "status": "completed",
+          "prerequisites": ["w1d1"],
+          "bloom_level": "Apply",
+          "topics": ["Inmutabilidad de strings", "String manipulation methods", "Pattern matching básico"],
+          "practice_problems": ["Valid Anagram", "Palindrome Number", "Longest Common Prefix", "Reverse String"],
+          "evidence_path": "week-01/day-3",
+          "notes": "Resolver: palindrome, anagram, substring problems"
+        },
+        {
+           "id": "w1d4",
+           "label": "Prefix Sums",
+           "status": "in_progress",
+           "prerequisites": ["w1d2", "w1d3"],
+          "bloom_level": "Apply",
+          "topics": ["Prefix sum array", "Range sum queries", "Subarray sum problems"],
+          "practice_problems": ["Subarray Sum Equals K", "Maximum Subarray", "Range Sum Query"],
+          "evidence_path": "week-01/day-4",
+          "notes": "Optimizar queries de rango con prefix sums"
+        },
+        {
+          "id": "w1d5",
+          "label": "Milestone 1 - Arrays y Strings",
+          "status": "locked",
+          "prerequisites": ["w1d2", "w1d3", "w1d4"],
+          "bloom_level": "Evaluate",
+          "topics": ["Examen integrador semana 1"],
+          "practice_problems": ["Two Sum", "Best Time to Buy/Sell Stock", "Maximum Subarray"],
+          "evidence_path": "week-01/day-5",
+          "exam": true,
+          "exam_duration_min": 90,
+          "exam_problem_count": 3
+        }
+      ]
+    },
+    {
+      "week": 2,
+      "theme": "Recursión y Two Pointers",
+      "milestones": [
+        {
+          "id": "w2d1",
+          "label": "Recursión básica",
+          "status": "locked",
+          "prerequisites": ["w1d5"],
+          "bloom_level": "Understand",
+          "topics": ["Call stack", "Base case y recursive case", "Tail recursion"],
+          "practice_problems": ["Factorial", "Fibonacci", "Power of N"],
+          "evidence_path": "week-02/day-1",
+          "notes": "Implementar factorial, fibonacci, countdown"
+        },
+        {
+          "id": "w2d2",
+          "label": "Recursión avanzada",
+          "status": "locked",
+          "prerequisites": ["w2d1"],
+          "bloom_level": "Analyze",
+          "topics": ["Trazar ejecución recursiva", "Recursion tree", "Multiple recursive calls"],
+          "practice_problems": ["Tower of Hanoi", "Climbing Stairs", "Subsets (recursive)", "Permutations (recursive)"],
+          "evidence_path": "week-02/day-2",
+          "notes": "Tower of Hanoi, fractales simples"
+        },
+        {
+          "id": "w2d3",
+          "label": "Two Pointers (opuestos)",
+          "status": "locked",
+          "prerequisites": ["w1d2"],
+          "bloom_level": "Apply",
+          "topics": ["Patrón para arrays ordenados", "Converging pointers"],
+          "practice_problems": ["Valid Palindrome", "3Sum", "Container With Most Water", "Trapping Rain Water"],
+          "evidence_path": "week-02/day-3",
+          "notes": "Resolver: container with most water, 3Sum"
+        },
+        {
+          "id": "w2d4",
+          "label": "Two Pointers (mismo lado)",
+          "status": "locked",
+          "prerequisites": ["w1d2"],
+          "bloom_level": "Apply",
+          "topics": ["Fast-slow pattern intro", "Removing duplicates in-place"],
+          "practice_problems": ["Move Zeroes", "Remove Element", "Remove Duplicates from Sorted Array"],
+          "evidence_path": "week-02/day-4",
+          "notes": "Resolver: remove element, move zeroes"
+        },
+        {
+          "id": "w2d5",
+          "label": "Milestone 2 - Recursión y Two Pointers",
+          "status": "locked",
+          "prerequisites": ["w2d2", "w2d3", "w2d4"],
+          "bloom_level": "Evaluate",
+          "topics": ["Examen integrador semana 2"],
+          "practice_problems": ["3Sum", "Climbing Stairs", "Merge Sorted Array"],
+          "evidence_path": "week-02/day-5",
+          "exam": true,
+          "exam_duration_min": 90,
+          "exam_problem_count": 3
+        }
+      ]
+    },
+    {
+      "week": 3,
+      "theme": "Hash Maps, Sliding Window y Sets",
+      "milestones": [
+        {
+          "id": "w3d1",
+          "label": "Hash Maps en Ruby",
+          "status": "locked",
+          "prerequisites": ["w2d5"],
+          "bloom_level": "Understand",
+          "topics": ["Hashing y collisions", "O(1) lookup", "Ruby Hash internals"],
+          "practice_problems": ["Two Sum", "Group Anagrams", "Longest Consecutive Sequence", "Valid Sudoku"],
+          "evidence_path": "week-03/day-1",
+          "notes": "Implementar HashMap desde cero, frecuencia counting"
+        },
+        {
+          "id": "w3d2",
+          "label": "Sliding Window (fijo)",
+          "status": "locked",
+          "prerequisites": ["w1d2"],
+          "bloom_level": "Apply",
+          "topics": ["Ventana de tamaño fijo", "Sumas de subarrays"],
+          "practice_problems": ["Maximum Sum Subarray of Size K", "Longest Substring with K Distinct"],
+          "evidence_path": "week-03/day-2",
+          "notes": "Resolver: max sum subarray size k"
+        },
+        {
+          "id": "w3d3",
+          "label": "Sliding Window (variable)",
+          "status": "completed",
+          "prerequisites": ["w3d2"],
+          "bloom_level": "Apply",
+          "topics": ["Expand/shrink dinámico", "Two pointer sliding window"],
+          "practice_problems": ["Longest Substring Without Repeating", "Minimum Window Substring", "Longest Repeating Character Replacement"],
+          "evidence_path": "week-03/day-3",
+          "notes": "Resolver: longest substring without repeating"
+        },
+        {
+          "id": "w3d4",
+          "label": "Sets + Frecuencia",
+          "status": "completed",
+          "prerequisites": ["w3d1"],
+          "bloom_level": "Apply",
+          "topics": ["Ruby Set class", "Unicidad", "Intersection/Union"],
+          "practice_problems": ["Intersection of Two Arrays", "Single Number", "Happy Number", "Isomorphic Strings"],
+          "evidence_path": "week-03/day-4",
+          "notes": "Usar Set para unicidad"
+        },
+        {
+          "id": "w3d5",
+          "label": "Milestone 3 - Hash + Sliding Window",
+          "status": "completed",
+          "prerequisites": ["w3d2", "w3d3", "w3d4"],
+          "bloom_level": "Evaluate",
+          "topics": ["Examen integrador semana 3"],
+          "practice_problems": ["Longest Substring Without Repeating", "Top K Frequent Elements", "Group Anagrams"],
+          "evidence_path": "week-03/day-5",
+          "exam": true,
+          "exam_duration_min": 90,
+          "exam_problem_count": 3
+        }
+      ]
+    },
+    {
+      "week": 4,
+      "theme": "Linked Lists, Stacks y Queues",
+      "milestones": [
+        {
+          "id": "w4d1",
+          "label": "Linked List implementación",
+          "status": "locked",
+          "prerequisites": ["w3d5"],
+          "bloom_level": "Apply",
+          "topics": ["Singly LinkedList", "Doubly LinkedList", "Clase Node en Ruby"],
+          "practice_problems": [],
+          "evidence_path": "week-04/day-1",
+          "notes": "Clase Node + LinkedList con CRUD desde cero"
+        },
+        {
+          "id": "w4d2",
+          "label": "Linked List Patterns",
+          "status": "completed",
+          "prerequisites": ["w4d1"],
+          "bloom_level": "Apply",
+          "topics": ["Fast-slow pointers", "Reverse linked list", "Merge linked lists"],
+          "practice_problems": ["Reverse Linked List", "Linked List Cycle", "Merge Two Sorted Lists", "Middle of Linked List"],
+          "evidence_path": "week-04/day-2",
+          "notes": "Resolver: reverse list, detect cycle, merge sorted"
+        },
+        {
+          "id": "w4d3",
+          "label": "Stacks",
+          "status": "completed",
+          "prerequisites": ["w1d2"],
+          "bloom_level": "Understand",
+          "topics": ["LIFO", "Stack con array", "Aplicaciones prácticas"],
+          "practice_problems": ["Valid Parentheses", "Min Stack", "Evaluate Reverse Polish Notation", "Daily Temperatures"],
+          "evidence_path": "week-04/day-3",
+          "notes": "Resolver: valid parentheses, min stack, daily temps"
+        },
+        {
+          "id": "w4d4",
+          "label": "Queues",
+          "status": "completed",
+          "prerequisites": ["w1d2"],
+          "bloom_level": "Understand",
+          "topics": ["FIFO", "Deque", "Circular buffer"],
+          "practice_problems": ["Implement Queue using Stacks", "Design Circular Queue"],
+          "evidence_path": "week-04/day-4",
+          "notes": "Resolver: implement queue using stacks, number of recent calls"
+        },
+        {
+          "id": "w4d5",
+          "label": "Milestone 4 - LL + Stack + Queue",
+          "status": "locked",
+          "prerequisites": ["w4d2", "w4d3", "w4d4"],
+          "bloom_level": "Evaluate",
+          "topics": ["Examen integrador semana 4"],
+          "practice_problems": ["Linked List Cycle", "Valid Parentheses", "LRUCache"],
+          "evidence_path": "week-04/day-5",
+          "exam": true,
+          "exam_duration_min": 90,
+          "exam_problem_count": 3
+        }
+      ]
+    },
+    {
+      "week": 5,
+      "theme": "Binary Search",
+      "milestones": [
+        {
+          "id": "w5d1",
+          "label": "Binary Search básico",
+          "status": "locked",
+          "prerequisites": ["w4d5"],
+          "bloom_level": "Apply",
+          "topics": ["BS en array ordenado", "Template estándar", "left, right, mid"],
+          "practice_problems": ["Binary Search", "Search Insert Position", "Search First/Last Position"],
+          "evidence_path": "week-05/day-1",
+          "notes": "Resolver: search, first/last position"
+        },
+        {
+          "id": "w5d2",
+          "label": "BS en respuesta",
+          "status": "locked",
+          "prerequisites": ["w5d1"],
+          "bloom_level": "Analyze",
+          "topics": ["Reconocer cuándo BS aplica a la respuesta", "Monotonicity"],
+          "practice_problems": ["Koko Eating Bananas", "Capacity to Ship Packages", "Sqrt(x)"],
+          "evidence_path": "week-05/day-2",
+          "notes": "Resolver: koko eating bananas, ship packages"
+        },
+        {
+          "id": "w5d3",
+          "label": "BS en rotated array",
+          "status": "locked",
+          "prerequisites": ["w5d1"],
+          "bloom_level": "Apply",
+          "topics": ["BS con pivot", "Buscar en array rotado"],
+          "practice_problems": ["Search in Rotated Array", "Find Minimum in Rotated Array", "Find Peak Element"],
+          "evidence_path": "week-05/day-3",
+          "notes": "Resolver: search rotated array, find min"
+        },
+        {
+          "id": "w5d4",
+          "label": "BS avanzado",
+          "status": "locked",
+          "prerequisites": ["w5d2", "w5d3"],
+          "bloom_level": "Evaluate",
+          "topics": ["Elegir entre BS y otras estrategias", "BS en 2D"],
+          "practice_problems": ["Median of Two Sorted Arrays", "Search 2D Matrix", "First Bad Version"],
+          "evidence_path": "week-05/day-4",
+          "notes": "Resolver: median of sorted arrays, peak element"
+        },
+        {
+          "id": "w5d5",
+          "label": "Milestone 5 - Binary Search",
+          "status": "locked",
+          "prerequisites": ["w5d2", "w5d3", "w5d4"],
+          "bloom_level": "Evaluate",
+          "topics": ["Examen integrador semana 5"],
+          "practice_problems": ["Search in Rotated Array", "Koko Eating Bananas", "Find Peak Element"],
+          "evidence_path": "week-05/day-5",
+          "exam": true,
+          "exam_duration_min": 90,
+          "exam_problem_count": 3
+        }
+      ]
+    },
+    {
+      "week": 6,
+      "theme": "Sorting y Heaps",
+      "milestones": [
+        {
+          "id": "w6d1",
+          "label": "Sorting Algorithms",
+          "status": "locked",
+          "prerequisites": ["w5d5"],
+          "bloom_level": "Understand",
+          "topics": ["Merge Sort", "Quick Sort", "Complejidad de cada uno"],
+          "practice_problems": [],
+          "evidence_path": "week-06/day-1",
+          "notes": "Implementar merge sort y quick sort en Ruby"
+        },
+        {
+          "id": "w6d2",
+          "label": "Custom Sort Patterns",
+          "status": "locked",
+          "prerequisites": ["w6d1"],
+          "bloom_level": "Apply",
+          "topics": ["Comparadores personalizados", "Ordenar por frecuencia"],
+          "practice_problems": ["Sort Colors", "Sort by Frequency"],
+          "evidence_path": "week-06/day-2",
+          "notes": "Ordenar con comparadores personalizados"
+        },
+        {
+          "id": "w6d3",
+          "label": "Merge Intervals",
+          "status": "locked",
+          "prerequisites": ["w6d2"],
+          "bloom_level": "Apply",
+          "topics": ["Intervalos superpuestos", "Patrón de merge"],
+          "practice_problems": ["Merge Intervals", "Insert Interval", "Non-overlapping Intervals"],
+          "evidence_path": "week-06/day-3",
+          "notes": "Resolver: merge, insert, non-overlapping"
+        },
+        {
+          "id": "w6d4",
+          "label": "Heaps / Priority Queue",
+          "status": "locked",
+          "prerequisites": ["w6d1"],
+          "bloom_level": "Apply",
+          "topics": ["Min-heap y Max-heap", "Implementación en Ruby", "Top-K pattern"],
+          "practice_problems": ["Kth Largest Element", "Top K Frequent Elements", "Find Median from Stream"],
+          "evidence_path": "week-06/day-4",
+          "notes": "Implementar min-heap y max-heap en Ruby"
+        },
+        {
+          "id": "w6d5",
+          "label": "Milestone 6 - Sorting + Heaps",
+          "status": "locked",
+          "prerequisites": ["w6d3", "w6d4"],
+          "bloom_level": "Evaluate",
+          "topics": ["Examen integrador semana 6"],
+          "practice_problems": ["Merge Intervals", "Top K Frequent Elements", "Find Median from Stream"],
+          "evidence_path": "week-06/day-5",
+          "exam": true,
+          "exam_duration_min": 90,
+          "exam_problem_count": 3
+        }
+      ]
+    },
+    {
+      "week": 7,
+      "theme": "Trees - Recorridos",
+      "milestones": [
+        {
+          "id": "w7d1",
+          "label": "Binary Trees estructura",
+          "status": "locked",
+          "prerequisites": ["w6d5"],
+          "bloom_level": "Apply",
+          "topics": ["TreeNode class", "Build from array", "Build from traversal"],
+          "practice_problems": ["Maximum Depth", "Same Tree", "Invert Binary Tree"],
+          "evidence_path": "week-07/day-1",
+          "notes": "Build tree from array, from traversal"
+        },
+        {
+          "id": "w7d2",
+          "label": "DFS (pre/in/post order)",
+          "status": "locked",
+          "prerequisites": ["w7d1"],
+          "bloom_level": "Apply",
+          "topics": ["Pre-order, In-order, Post-order", "Recursivo e iterativo"],
+          "practice_problems": ["Binary Tree Preorder Traversal", "Binary Tree Inorder Traversal", "Binary Tree Postorder Traversal", "Symmetric Tree"],
+          "evidence_path": "week-07/day-2",
+          "notes": "Resolver: traversal problems"
+        },
+        {
+          "id": "w7d3",
+          "label": "BFS (level order)",
+          "status": "locked",
+          "prerequisites": ["w7d1"],
+          "bloom_level": "Apply",
+          "topics": ["Recorrido por niveles", "Queue para BFS"],
+          "practice_problems": ["Level Order Traversal", "Zigzag Level Order", "Right Side View"],
+          "evidence_path": "week-07/day-3",
+          "notes": "Resolver: level order, zigzag, right side view"
+        },
+        {
+          "id": "w7d4",
+          "label": "Tree Properties",
+          "status": "locked",
+          "prerequisites": ["w7d2", "w7d3"],
+          "bloom_level": "Analyze",
+          "topics": ["Height", "Diameter", "Balance", "Path Sum"],
+          "practice_problems": ["Diameter of Binary Tree", "Balanced Binary Tree", "Path Sum", "Binary Tree Maximum Path Sum"],
+          "evidence_path": "week-07/day-4",
+          "notes": "Resolver: max depth, diameter, balanced check"
+        },
+        {
+          "id": "w7d5",
+          "label": "Milestone 7 - Tree Traversals",
+          "status": "locked",
+          "prerequisites": ["w7d2", "w7d3", "w7d4"],
+          "bloom_level": "Evaluate",
+          "topics": ["Examen integrador semana 7"],
+          "practice_problems": ["Level Order Traversal", "Diameter of Binary Tree", "Binary Tree Maximum Path Sum"],
+          "evidence_path": "week-07/day-5",
+          "exam": true,
+          "exam_duration_min": 90,
+          "exam_problem_count": 3
+        }
+      ]
+    },
+    {
+      "week": 8,
+      "theme": "Trees Avanzado y BST",
+      "milestones": [
+        {
+          "id": "w8d1",
+          "label": "BST operaciones",
+          "status": "locked",
+          "prerequisites": ["w7d5"],
+          "bloom_level": "Apply",
+          "topics": ["Insert en BST", "Delete en BST", "Search en BST", "Validate BST"],
+          "practice_problems": ["Validate BST", "Delete Node in BST", "Search in BST"],
+          "evidence_path": "week-08/day-1",
+          "notes": "Implementar BST completo en Ruby"
+        },
+        {
+          "id": "w8d2",
+          "label": "LCA y ancestros",
+          "status": "locked",
+          "prerequisites": ["w8d1"],
+          "bloom_level": "Apply",
+          "topics": ["Lowest Common Ancestor en BT", "LCA en BST", "Ancestors path"],
+          "practice_problems": ["Lowest Common Ancestor (BT)", "Lowest Common Ancestor (BST)", "All Elements in Two BSTs"],
+          "evidence_path": "week-08/day-2",
+          "notes": "Resolver: LCA en BT y BST"
+        },
+        {
+          "id": "w8d3",
+          "label": "Trie (Prefix Tree)",
+          "status": "locked",
+          "prerequisites": ["w3d1"],
+          "bloom_level": "Apply",
+          "topics": ["Implementar Trie", "Búsqueda con prefijos", "Word search"],
+          "practice_problems": ["Implement Trie", "Word Search II", "Add and Search Word"],
+          "evidence_path": "week-08/day-3",
+          "notes": "Implementar Trie con búsqueda"
+        },
+        {
+          "id": "w8d4",
+          "label": "Segment Tree (intro)",
+          "status": "locked",
+          "prerequisites": ["w7d2"],
+          "bloom_level": "Understand",
+          "topics": ["Concepto de Segment Tree", "Range sum query", "Update point"],
+          "practice_problems": ["Range Sum Query - Mutable"],
+          "evidence_path": "week-08/day-4",
+          "notes": "Implementar range sum query"
+        },
+        {
+          "id": "w8d5",
+          "label": "Milestone 8 - Árboles Avanzados",
+          "status": "locked",
+          "prerequisites": ["w8d2", "w8d3", "w8d4"],
+          "bloom_level": "Evaluate",
+          "topics": ["Examen integrador semana 8"],
+          "practice_problems": ["Validate BST", "Lowest Common Ancestor", "Implement Trie"],
+          "evidence_path": "week-08/day-5",
+          "exam": true,
+          "exam_duration_min": 90,
+          "exam_problem_count": 3
+        }
+      ]
+    },
+    {
+      "week": 9,
+      "theme": "Graphs - BFS y DFS",
+      "milestones": [
+        {
+          "id": "w9d1",
+          "label": "Graph representation",
+          "status": "locked",
+          "prerequisites": ["w8d5"],
+          "bloom_level": "Apply",
+          "topics": ["Adjacency list", "Adjacency matrix", "Build from edges"],
+          "practice_problems": [],
+          "evidence_path": "week-09/day-1",
+          "notes": "Build graph from edges, visualize"
+        },
+        {
+          "id": "w9d2",
+          "label": "Graph BFS",
+          "status": "locked",
+          "prerequisites": ["w9d1"],
+          "bloom_level": "Apply",
+          "topics": ["BFS en graphs", "Shortest path en unweighted", "Connected components"],
+          "practice_problems": ["Number of Islands", "Rotting Oranges", "Shortest Path in Binary Matrix"],
+          "evidence_path": "week-09/day-2",
+          "notes": "Resolver: number of islands, shortest path binary matrix"
+        },
+        {
+          "id": "w9d3",
+          "label": "Graph DFS",
+          "status": "locked",
+          "prerequisites": ["w9d1"],
+          "bloom_level": "Apply",
+          "topics": ["DFS en graphs", "Cycle detection", "Connectivity"],
+          "practice_problems": ["Clone Graph", "Surrounded Regions", "Course Schedule"],
+          "evidence_path": "week-09/day-3",
+          "notes": "Resolver: course schedule, clone graph"
+        },
+        {
+          "id": "w9d4",
+          "label": "Topological Sort",
+          "status": "locked",
+          "prerequisites": ["w9d3"],
+          "bloom_level": "Apply",
+          "topics": ["Kahn's algorithm", "DFS topological", "DAG"],
+          "practice_problems": ["Course Schedule II", "Alien Dictionary", "All Paths from Source to Target"],
+          "evidence_path": "week-09/day-4",
+          "notes": "Resolver: course schedule I & II, alien dictionary"
+        },
+        {
+          "id": "w9d5",
+          "label": "Milestone 9 - Graphs BFS/DFS",
+          "status": "locked",
+          "prerequisites": ["w9d2", "w9d3", "w9d4"],
+          "bloom_level": "Evaluate",
+          "topics": ["Examen integrador semana 9"],
+          "practice_problems": ["Number of Islands", "Course Schedule", "Word Ladder"],
+          "evidence_path": "week-09/day-5",
+          "exam": true,
+          "exam_duration_min": 90,
+          "exam_problem_count": 3
+        }
+      ]
+    },
+    {
+      "week": 10,
+      "theme": "Union-Find y Grafos Avanzado",
+      "milestones": [
+        {
+          "id": "w10d1",
+          "label": "Union-Find (Disjoint Set)",
+          "status": "locked",
+          "prerequisites": ["w9d5"],
+          "bloom_level": "Apply",
+          "topics": ["Path compression", "Union by rank", "Implementación en Ruby"],
+          "practice_problems": ["Number of Connected Components", "Redundant Connection", "Accounts Merge"],
+          "evidence_path": "week-10/day-1",
+          "notes": "Implementar con path compression + rank"
+        },
+        {
+          "id": "w10d2",
+          "label": "Dijkstra's Algorithm",
+          "status": "locked",
+          "prerequisites": ["w10d1"],
+          "bloom_level": "Apply",
+          "topics": ["Shortest path en weighted graphs", "Priority queue en Dijkstra"],
+          "practice_problems": ["Network Delay Time", "Path with Minimum Effort", "Swim in Rising Water"],
+          "evidence_path": "week-10/day-2",
+          "notes": "Resolver: network delay time, path with minimum effort"
+        },
+        {
+          "id": "w10d3",
+          "label": "Bellman-Ford",
+          "status": "locked",
+          "prerequisites": ["w10d2"],
+          "bloom_level": "Understand",
+          "topics": ["Negative edges", "Negative cycle detection"],
+          "practice_problems": ["Cheapest Flights Within K Stops"],
+          "evidence_path": "week-10/day-3",
+          "notes": "Resolver: cheapest flights within k stops"
+        },
+        {
+          "id": "w10d4",
+          "label": "Minimum Spanning Tree",
+          "status": "locked",
+          "prerequisites": ["w10d1"],
+          "bloom_level": "Apply",
+          "topics": ["Kruskal's algorithm", "Prim's algorithm"],
+          "practice_problems": ["Min Cost to Connect All Points", "Evaluate Division"],
+          "evidence_path": "week-10/day-4",
+          "notes": "Resolver: min cost to connect all points"
+        },
+        {
+          "id": "w10d5",
+          "label": "Milestone 10 - Graphs Avanzado",
+          "status": "locked",
+          "prerequisites": ["w10d2", "w10d3", "w10d4"],
+          "bloom_level": "Evaluate",
+          "topics": ["Examen integrador semana 10"],
+          "practice_problems": ["Network Delay Time", "Redundant Connection", "Min Cost to Connect All Points"],
+          "evidence_path": "week-10/day-5",
+          "exam": true,
+          "exam_duration_min": 90,
+          "exam_problem_count": 3
+        }
+      ]
+    },
+    {
+      "week": 11,
+      "theme": "Backtracking y Recursión Avanzada",
+      "milestones": [
+        {
+          "id": "w11d1",
+          "label": "Backtracking pattern",
+          "status": "locked",
+          "prerequisites": ["w10d5"],
+          "bloom_level": "Apply",
+          "topics": ["Template: choose-explore-unchoose", "Decision tree", "Pruning básico"],
+          "practice_problems": ["Permutations", "Combinations", "Subsets"],
+          "evidence_path": "week-11/day-1",
+          "notes": "Resolver: permutations, combinations, subsets"
+        },
+        {
+          "id": "w11d2",
+          "label": "Backtracking con constraints",
+          "status": "locked",
+          "prerequisites": ["w11d1"],
+          "bloom_level": "Apply",
+          "topics": ["Pruning avanzado", "Sudoku solver", "N-Queens"],
+          "practice_problems": ["N-Queens", "Sudoku Solver"],
+          "evidence_path": "week-11/day-2",
+          "notes": "Resolver con pruning"
+        },
+        {
+          "id": "w11d3",
+          "label": "Word Search Backtracking",
+          "status": "locked",
+          "prerequisites": ["w11d1"],
+          "bloom_level": "Apply",
+          "topics": ["Grid-based backtracking", "Backtracking en matrices"],
+          "practice_problems": ["Word Search", "Word Search II"],
+          "evidence_path": "week-11/day-3",
+          "notes": "Resolver: word search I & II"
+        },
+        {
+          "id": "w11d4",
+          "label": "Palindrome Partitioning",
+          "status": "locked",
+          "prerequisites": ["w11d1"],
+          "bloom_level": "Apply",
+          "topics": ["String partitioning", "Palindrome check"],
+          "practice_problems": ["Palindrome Partitioning", "Restore IP Addresses", "Generate Parentheses"],
+          "evidence_path": "week-11/day-4",
+          "notes": "Resolver: palindrome partition, restore IP addresses"
+        },
+        {
+          "id": "w11d5",
+          "label": "Milestone 11 - Backtracking",
+          "status": "locked",
+          "prerequisites": ["w11d2", "w11d3", "w11d4"],
+          "bloom_level": "Evaluate",
+          "topics": ["Examen integrador semana 11"],
+          "practice_problems": ["Permutations", "N-Queens", "Word Search"],
+          "evidence_path": "week-11/day-5",
+          "exam": true,
+          "exam_duration_min": 90,
+          "exam_problem_count": 3
+        }
+      ]
+    },
+    {
+      "week": 12,
+      "theme": "Dynamic Programming",
+      "milestones": [
+        {
+          "id": "w12d1",
+          "label": "DP con Memoization",
+          "status": "locked",
+          "prerequisites": ["w11d5"],
+          "bloom_level": "Understand",
+          "topics": ["Overlapping subproblems", "Memoize top-down", "State definition"],
+          "practice_problems": ["Climbing Stairs", "House Robber", "Coin Change"],
+          "evidence_path": "week-12/day-1",
+          "notes": "Resolver: fibonacci memo, climbing stairs, house robber"
+        },
+        {
+          "id": "w12d2",
+          "label": "DP Tabular 1D",
+          "status": "locked",
+          "prerequisites": ["w12d1"],
+          "bloom_level": "Apply",
+          "topics": ["Bottom-up approach", "1D DP table", "State transitions"],
+          "practice_problems": ["Coin Change", "Longest Increasing Subsequence", "Decode Ways", "House Robber II"],
+          "evidence_path": "week-12/day-2",
+          "notes": "Resolver: coin change, LIS, decode ways"
+        },
+        {
+          "id": "w12d3",
+          "label": "DP Tabular 2D",
+          "status": "locked",
+          "prerequisites": ["w12d2"],
+          "bloom_level": "Apply",
+          "topics": ["Grid-based DP", "2D DP table", "String DP"],
+          "practice_problems": ["Unique Paths", "Edit Distance", "Longest Common Subsequence", "Minimum Path Sum"],
+          "evidence_path": "week-12/day-3",
+          "notes": "Resolver: unique paths, edit distance, LCS"
+        },
+        {
+          "id": "w12d4",
+          "label": "DP Avanzado (Knapsack)",
+          "status": "locked",
+          "prerequisites": ["w12d2", "w12d3"],
+          "bloom_level": "Evaluate",
+          "topics": ["0/1 Knapsack", "Unbounded Knapsack", "Elegir entre greedy/DP/backtracking"],
+          "practice_problems": ["Partition Equal Subset Sum", "Target Sum", "Jump Game II"],
+          "evidence_path": "week-12/day-4",
+          "notes": "Resolver: 0/1 knapsack, partition equal subset sum"
+        },
+        {
+          "id": "w12d5",
+          "label": "EXAMEN FINAL",
+          "status": "locked",
+          "prerequisites": ["w12d4"],
+          "bloom_level": "Create",
+          "topics": ["Simulación completa de entrevista técnica"],
+          "practice_problems": ["4 problemas: 1 Easy + 2 Medium + 1 Hard"],
+          "evidence_path": "week-12/day-5",
+          "exam": true,
+          "exam_duration_min": 120,
+          "exam_problem_count": 4
+        }
+      ]
+    }
+  ]
+}

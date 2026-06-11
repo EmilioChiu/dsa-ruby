@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lección 0003: Queues (Colas) y FIFO</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 2rem; }
+        h1, h2 { color: #2c3e50; }
+        code { background: #f4f4f4; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
+        pre { background: #f4f4f4; padding: 1rem; border-radius: 8px; overflow-x: auto; }
+        .success { color: #27ae60; font-weight: bold; }
+        .warning { color: #e67e22; border-left: 4px solid #e67e22; padding-left: 1rem; }
+        .task { background: #e8f4fd; border-left: 4px solid #3498db; padding: 1rem; margin: 1rem 0; }
+    </style>
+</head>
+<body>
+    <h1>Lección 0003: Queues (Colas) y FIFO</h1>
+    <p>Bienvenidos al mundo de las <strong>Queues</strong>. Si el Stack era un tubo de papas Pringles (LIFO), la Queue es la fila del supermercado: <strong>First In, First Out (FIFO)</strong>.</p>
+
+    <h2>1. El Concepto FIFO</h2>
+    <p>En una Queue, el primer elemento en entrar es el primero en salir. Las operaciones principales son:</p>
+    <ul>
+        <li><strong>Enqueue (Ruby: <code>push</code> o <code><<</code>)</strong>: Añadir al final.</li>
+        <li><strong>Dequeue (Ruby: <code>shift</code>)</strong>: Quitar del principio.</li>
+        <li><strong>Peek (Ruby: <code>first</code>)</strong>: Ver el elemento frontal sin quitarlo.</li>
+    </ul>
+
+    <div class="warning">
+        <p><strong>Nota sobre Ruby:</strong> Usar <code>Array#shift</code> en Ruby tiene una complejidad de <strong>O(n)</strong> porque todos los elementos restantes deben moverse una posición a la izquierda. En una implementación ideal de Queue, <code>dequeue</code> debería ser <strong>O(1)</strong>.</p>
+    </div>
+
+    <h2>2. Implementación Ideal</h2>
+    <p>Para lograr O(1) en ambas puntas, se suele usar una <strong>Doubly Linked List</strong> o un <strong>Circular Buffer</strong>. Ruby no tiene una clase <code>Queue</code> eficiente para algoritmos (la que trae es para multithreading), por lo que en entrevistas a menudo usamos <code>Array</code> o implementamos una simple.</p>
+
+    <h2>3. ¿Cuándo usar una Queue?</h2>
+    <ul>
+        <li><strong>BFS (Breadth-First Search)</strong>: Exploración por niveles en árboles y grafos.</li>
+        <li><strong>Buffer/Procesamiento de tareas</strong>: Procesar elementos en el orden exacto en que llegaron.</li>
+        <li><strong>Sistemas de mensajería</strong>: Colas de trabajos (Sidekiq, RabbitMQ).</li>
+    </ul>
+
+    <div class="task">
+        <h3>Tu Misión para Hoy</h3>
+        <p>He preparado dos desafíos en tu carpeta de práctica:</p>
+        <ol>
+            <li><code>01_queue_using_stacks.rb</code>: Implementa una Queue usando solo dos Stacks. ¡Un clásico de entrevistas!</li>
+            <li><code>02_circular_queue.rb</code>: Implementa una cola circular usando un Array de tamaño fijo para evitar el costo O(n) del <code>shift</code>.</li>
+        </ol>
+        <p>Ejecuta los archivos con <code>ruby <nombre_del_archivo></code> para verificar tu solución.</p>
+    </div>
+
+    <hr>
+    <p><em>¿Tienes dudas sobre por qué usamos dos stacks para una queue? ¡Pregúntame!</em></p>
+</body>
+</html>
