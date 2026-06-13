@@ -1,0 +1,14 @@
+{
+  "pending_concepts": [
+    {
+      "topic": "LRU Cache Implementation",
+      "reason": "Dificultad con la manipulación de punteros y nodos centinela (dummy nodes).",
+      "required_reinforcement": "Ejercicios de intercambio de nodos y soldadura de punteros en listas dobles.",
+      "status": "pending"
+    }
+  ],
+  "suggested_warmups": [
+    "Implementar una Doubly Linked List básica solo con centinelas.",
+    "Ejercicio: Reverse a Doubly Linked List."
+  ]
+}

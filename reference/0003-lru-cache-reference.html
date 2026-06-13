@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cheat Sheet: LRU Cache (Doubly Linked List + Hash Map)</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.5; color: #2c3e50; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .box { border: 1px solid #ccc; padding: 15px; border-radius: 5px; background: #fff; }
+        code { background: #f0f0f0; padding: 2px 4px; border-radius: 3px; font-weight: bold; }
+        h2 { border-bottom: 2px solid #3498db; }
+        .logic { color: #e67e22; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>LRU Cache Reference</h1>
+    <div class="grid">
+        <div class="box">
+            <h2>Estructura</h2>
+            <ul>
+                <li><strong>Hash Map</strong>: Para acceso O(1) a los nodos.</li>
+                <li><strong>Doubly Linked List</strong>: Para reordenar nodos en O(1).</li>
+                <li><strong>Dummy Nodes</strong>: <code>head</code> y <code>tail</code> fijos.</li>
+            </ul>
+        </div>
+        <div class="box">
+            <h2>Operaciones Clave</h2>
+            <ul>
+                <li><span class="logic">GET(key)</span>: Si existe, <code>remove(node)</code> + <code>insert(node)</code>.</li>
+                <li><span class="logic">PUT(key, val)</span>: <code>insert(node)</code>. Si excede capacidad, <code>remove(tail.prev)</code>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="box">
+        <h2>Diagrama de Punteros (Inserción MRU)</h2>
+        <p>Para insertar un nodo <code>N</code> entre <code>head</code> y <code>A</code>:</p>
+        <pre>
+1. nxt = head.next
+2. head.next = N
+3. nxt.prev = N
+4. N.prev = head
+5. N.next = nxt
+        </pre>
+        <p><em>Resultado: head ⇄ N ⇄ A</em></p>
+    </div>
+</body>
+</html>

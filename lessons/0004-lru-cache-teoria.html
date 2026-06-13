@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lección 0004: LRU Cache - La Sinergia Perfecta</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 30px; }
+        .concept-box { background-color: #fff; border-left: 5px solid #3498db; padding: 15px; margin: 20px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        code { background-color: #eee; padding: 2px 5px; border-radius: 3px; font-family: 'Courier New', Courier, monospace; }
+        pre { background-color: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .highlight { color: #e67e22; font-weight: bold; }
+        .diagram { text-align: center; margin: 20px 0; background: white; padding: 20px; border-radius: 10px; }
+        .footer { margin-top: 50px; font-size: 0.9em; color: #7f8c8d; border-top: 1px solid #bdc3c7; padding-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Lección 0004: LRU Cache - La Sinergia Perfecta</h1>
+
+    <div class="concept-box">
+        <strong>El Problema:</strong> Imagina que tienes una memoria muy rápida pero muy pequeña (Capacidad <i>K</i>). Cuando se llena y quieres guardar algo nuevo, ¿a quién sacas? 
+        <br><br>
+        La política <strong>LRU (Least Recently Used)</strong> dice: "Saca al que no hemos usado en más tiempo".
+    </div>
+
+    <h2>1. ¿Por qué es difícil?</h2>
+    <p>Para una entrevista de nivel Top, te pedirán que las operaciones <code>get(key)</code> y <code>put(key, value)</code> sean <span class="highlight">O(1)</span>.</p>
+    <ul>
+        <li><strong>¿Un Array?</strong> <code>get</code> es O(n) si no está ordenado. Si movemos elementos, es O(n). <span style="color:red">FAIL.</span></li>
+        <li><strong>¿Un Hash Map solo?</strong> <code>get</code> es O(1), pero ¿cómo sabemos cuál es el más viejo? No hay orden. <span style="color:red">FAIL.</span></li>
+        <li><strong>¿Una Linked List sola?</strong> Mantiene el orden, pero buscar una llave es O(n). <span style="color:red">FAIL.</span></li>
+    </ul>
+
+    <h2>2. La Solución: El Híbrido</h2>
+    <p>Combinamos un <strong>Hash Map</strong> y una <strong>Doubly Linked List (DLL)</strong>.</p>
+    
+    <div class="diagram">
+        <p><strong>Hash Map:</strong> { llave => Nodo en la DLL }</p>
+        <p>↓</p>
+        <p><strong>DLL:</strong> [Cabeza: MRU] ⇄ [Nodo] ⇄ [Nodo] ⇄ [Cola: LRU]</p>
+        <small><i>MRU: Most Recently Used | LRU: Least Recently Used</i></small>
+    </div>
+
+    <div class="concept-box">
+        <strong>La lógica de la sinergia:</strong>
+        <ol>
+            <li>El <strong>Hash Map</strong> nos da acceso instantáneo O(1) a cualquier nodo en la lista.</li>
+            <li>La <strong>DLL</strong> nos permite "desenganchar" un nodo y moverlo al principio (Cabeza) en O(1).</li>
+            <li>Al insertar uno nuevo, si excedemos capacidad, eliminamos el nodo que está en la <strong>Cola</strong> (el más viejo).</li>
+        </ol>
+    </div>
+
+    <h2>3. Anatomía de la Implementación</h2>
+    <pre>
+# Estructura del Nodo para la DLL
+class Node
+  attr_accessor :key, :value, :prev, :next
+  def initialize(key, value)
+    @key = key
+    @value = value
+  end
+end
+
+# La Estrategia en pseudocódigo
+def get(key)
+  return -1 unless map.has?(key)
+  node = map[key]
+  move_to_head(node) # ¡Es el más nuevo ahora!
+  return node.value
+end
+
+def put(key, value)
+  if map.has?(key)
+    update_and_move_to_head(node)
+  else
+    evict_if_full
+    add_new_node_to_head
+  end
+end
+    </pre>
+
+    <h2>4. ¿Por qué Doubly Linked List?</h2>
+    <p>Si fuera una Singly Linked List, para borrar un nodo necesitaríamos el puntero al <i>anterior</i>, lo cual nos obligaría a recorrer la lista (O(n)). Al ser <strong>Doubly</strong>, cada nodo ya sabe quién es su anterior. Borrar es O(1).</p>
+
+    <div class="footer">
+        <p>Esta es la base del <strong>Milestone 4</strong>. ¿Estás listo para intentar implementarlo?</p>
+        <p><i>Referencia: <a href="https://en.wikipedia.org/wiki/Cache_replacement_policies#LRU" target="_blank">Políticas de Reemplazo de Caché</a></i></p>
+    </div>
+</body>
+</html>
