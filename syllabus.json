@@ -205,7 +205,7 @@
         {
           "id": "w4d1",
           "label": "Linked List implementación",
-          "status": "locked",
+          "status": "completed",
           "prerequisites": ["w3d5"],
           "bloom_level": "Apply",
           "topics": ["Singly LinkedList", "Doubly LinkedList", "Clase Node en Ruby"],
@@ -249,7 +249,7 @@
         {
           "id": "w4d5",
           "label": "Milestone 4 - LL + Stack + Queue",
-          "status": "locked",
+          "status": "completed",
           "prerequisites": ["w4d2", "w4d3", "w4d4"],
           "bloom_level": "Evaluate",
           "topics": ["Examen integrador semana 4"],
