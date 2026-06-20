@@ -268,13 +268,13 @@
         {
           "id": "w5d1",
           "label": "Binary Search básico",
-          "status": "locked",
+          "status": "completed",
           "prerequisites": ["w4d5"],
           "bloom_level": "Apply",
           "topics": ["BS en array ordenado", "Template estándar", "left, right, mid"],
-          "practice_problems": ["Binary Search", "Search Insert Position", "Search First/Last Position"],
+          "practice_problems": ["Binary Search", "Search Insert Position", "First Bad Version"],
           "evidence_path": "week-05/day-1",
-          "notes": "Resolver: search, first/last position"
+          "notes": "Resueltos: 704, 35, 278. Leccion 0006 mejorada."
         },
         {
           "id": "w5d2",

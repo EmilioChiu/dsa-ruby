@@ -18,4 +18,20 @@
 - **A tener en cuenta**: El usuario tiene buen ojo para detectar inconsistencias en la lógica (detectó el bug del `if @stack2.empty?`).
 - **Estado**: Listo para el Milestone 4 (Examen Integrador).
 - **Próximo reto sugerido**: Introducción teórica a LRU Cache antes de implementarlo en el examen.
-\n## Sesión 2026-06-12 (Corte de sesión)\n- **Estado**: El estudiante encontró dificultad significativa en LRU Cache.\n- **Bloqueo**: Confusión entre nodos reales y centinelas (head.prev/tail.next).\n- **Instrucción**: No pasar a Árboles (Week 5) hasta que los punteros de la lista doble sean intuitivos.\n- **Próximo paso**: Ejercicios de 'calentamiento' de punteros.\n\n## Sesión 2026-06-19 — Deuda Técnica (DLL + LRU)\n- **Logro**: Deuda técnica de punteros en DLL con centinelas saldada.\n- **Actividades**: Lección 0009 (DLL centinelas) + práctica 01_dll_sentinels.rb, Lección 0010 (Reverse DLL) + práctica 02_reverse_dll.rb, re-intento LRU Cache (03_lru_cache.rb).\n- **Aprendizajes**: `head.prev` y `tail.next` son siempre nil; distinguir entre `==`, `===` y `equal?` en Ruby; orden correcto en `put` (update antes que eviction).\n- **Próximo milestone**: w5d1 (Binary Search básico).
+
+## Sesión 2026-06-12 (Corte de sesión)
+- **Estado**: El estudiante encontró dificultad significativa en LRU Cache.
+- **Bloqueo**: Confusión entre nodos reales y centinelas (head.prev/tail.next).
+- **Instrucción**: No pasar a Árboles (Week 5) hasta que los punteros de la lista doble sean intuitivos.
+- **Próximo paso**: Ejercicios de 'calentamiento' de punteros.
+
+## Sesión 2026-06-19 — Deuda Técnica (DLL + LRU)
+- **Logro**: Deuda técnica de punteros en DLL con centinelas saldada.
+- **Actividades**: Lección 0009 (DLL centinelas) + práctica 01_dll_sentinels.rb, Lección 0010 (Reverse DLL) + práctica 02_reverse_dll.rb, re-intento LRU Cache (03_lru_cache.rb).
+- **Aprendizajes**: `head.prev` y `tail.next` son siempre nil; distinguir entre `==`, `===` y `equal?` en Ruby; orden correcto en `put` (update antes que eviction).
+- **Próximo milestone**: w5d1 (Binary Search básico).
+
+## Sesión 2026-06-20 — Binary Search (w5d1)
+- **Logro**: Lección 0006 mejorada (contraste, visualización paso a paso, quizzes). Tres problemas resueltos: LeetCode 704, 35, 278.
+- **Aprendizajes clave**: `left` como respuesta natural al salir del loop; `right = mid - 1` (no `right -= 1`) para O(log n).
+- **Próximo milestone**: w5d2 (BS en respuesta — Koko Eating Bananas, etc.).

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leccion 0006: Binary Search — Fundamentos y Plantilla</title>
+    <style>
+        :root {
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --line: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+        }
+        @media (min-width: 640px) {
+            body { padding: 3rem 1.5rem; }
+            .container { padding: 3rem 2.5rem; }
+        }
+        @media print {
+            body { padding: 0.5in; background: white; }
+            .container { box-shadow: none; padding: 0; }
+            .step-visual { break-inside: avoid; }
+        }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            color: var(--text);
+            margin-bottom: .5rem;
+        }
+        h1 .badge {
+            display: inline-block;
+            font-size: .7rem;
+            font-weight: 600;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: .2rem .6rem;
+            border-radius: 999px;
+            vertical-align: middle;
+            margin-left: .5rem;
+        }
+        .subtitle {
+            font-size: 1.05rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+        h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 2.2rem;
+            margin-bottom: .75rem;
+            color: var(--text);
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: .35rem;
+        }
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: .5rem;
+            color: #334155;
+        }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-bottom: 1rem; padding-left: 1.25rem; }
+        li { margin-bottom: .4rem; }
+
+        .callout {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout strong { color: var(--accent); }
+
+        .callout-warn {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout-warn strong { color: #b45309; }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem 1.5rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+            font-size: .85rem;
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+            tab-size: 2;
+        }
+        pre .kw  { color: #c084fc; }   /* def, if, elsif, else, end, while, return */
+        pre .op  { color: #f472b6; }   /* operators */
+        pre .cm  { color: #6b7280; font-style: italic; } /* comments */
+        pre .str { color: #34d399; }   /* strings */
+        pre .num { color: #fbbf24; }   /* numbers */
+        pre .fn  { color: #60a5fa; }   /* function names */
+        pre .var { color: #e2e8f0; }   /* variables */
+
+        code:not(pre code) {
+            background: #f1f5f9;
+            color: #1e293b;
+            padding: .15em .4em;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: .85em;
+        }
+
+        .step-visual {
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            font-size: .9rem;
+        }
+        .step-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin-top: .75rem;
+        }
+        .step-row .box {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            padding: .3rem .55rem;
+            border-radius: 4px;
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+        .step-row .box.lo { background: #dbeafe; border-color: #93c5fd; }
+        .step-row .box.hi { background: #fef3c7; border-color: #fbbf24; }
+        .step-row .box.mid { background: #d1fae5; border-color: #6ee7b7; color: #047857; }
+        .step-row .box.target { background: #fce7f3; border-color: #f472b6; color: #be185d; }
+        .step-row .box.elim { opacity: .35; }
+        .arrow { color: #94a3b8; font-size: 1.1rem; }
+
+        .quiz-box {
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            background: #fafafa;
+        }
+        .quiz-box h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+        .quiz-box details {
+            margin-top: .75rem;
+        }
+        .quiz-box summary {
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--accent);
+            padding: .3rem 0;
+        }
+        .quiz-box .answer {
+            padding: .75rem 1rem;
+            background: #f0fdf4;
+            border-left: 3px solid #22c55e;
+            border-radius: 0 6px 6px 0;
+            margin-top: .5rem;
+            font-size: .92rem;
+        }
+
+        .footer {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--line);
+            font-size: .9rem;
+            color: #64748b;
+            text-align: center;
+        }
+        .footer a { color: var(--accent); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.25rem;
+            font-size: .9rem;
+        }
+        th, td {
+            padding: .5rem .75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+        }
+        th { background: #f1f5f9; font-weight: 600; }
+        tr:last-child td { border-bottom: none; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>Binary Search <span class="badge">O(log n)</span></h1>
+    <p class="subtitle">
+        De buscar en un diccionario a encontrar elementos en arrays ordenados.
+        El primer patron que realmente aprovecha la <em>estructura</em> de los datos.
+    </p>
+
+    <h2>1. La Intuicion</h2>
+    <p>
+        Buscas "manzana" en un diccionario de 1000 paginas. Abres por la mitad (~p. 500).
+        Ves que estas en la "M". "Manzana" esta antes. Descartas 500 paginas de un golpe.
+        Repites: abres entre p. 1 y p. 500. Esa es la esencia de <strong>Binary Search</strong>.
+    </p>
+    <p>
+        En cada paso, <strong>descartas la mitad del espacio de busqueda</strong>.
+        En un array de 1,000,000 elementos, la busqueda lineal toma hasta 1,000,000 pasos.
+        Binary Search toma a lo sumo <strong>20 pasos</strong> (<code>2^20 ~ 1,048,576</code>).
+    </p>
+
+    <div class="callout-warn">
+        <strong>Requisito absoluto:</strong> el array debe estar <strong>ordenado</strong>.
+        Sin orden, no hay base para descartar mitades.
+    </div>
+
+    <h2>2. Visualizacion Paso a Paso</h2>
+    <p>Buscamos <code>target = 23</code> en <code>nums = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]</code>:</p>
+
+    <div class="step-visual">
+        <strong>Paso 1:</strong> <code>left=0, right=9, mid=4</code> → nums[4]=16 &lt; 23 → descartamos izquierda
+        <div class="step-row">
+            <span class="box lo">L</span>
+            <span class="box elim">2</span>
+            <span class="box elim">5</span>
+            <span class="box elim">8</span>
+            <span class="box elim">12</span>
+            <span class="box mid">16</span>
+            <span class="box">23</span>
+            <span class="box">38</span>
+            <span class="box">56</span>
+            <span class="box">72</span>
+            <span class="box hi">R</span>
+            <span class="arrow">→</span>
+            <span class="box lo">L</span>
+            <span class="box">23</span>
+            <span class="box">38</span>
+            <span class="box">56</span>
+            <span class="box">72</span>
+            <span class="box hi">R</span>
+        </div>
+    </div>
+
+    <div class="step-visual">
+        <strong>Paso 2:</strong> <code>left=5, right=9, mid=7</code> → nums[7]=56 &gt; 23 → descartamos derecha
+        <div class="step-row">
+            <span class="box lo">L</span>
+            <span class="box">23</span>
+            <span class="box">38</span>
+            <span class="box mid">56</span>
+            <span class="box elim">72</span>
+            <span class="box elim hi">R</span>
+            <span class="arrow">→</span>
+            <span class="box lo">L</span>
+            <span class="box">23</span>
+            <span class="box hi">R</span>
+        </div>
+    </div>
+
+    <div class="step-visual">
+        <strong>Paso 3:</strong> <code>left=5, right=6, mid=5</code> → nums[5]=23 == target → <strong>encontrado!</strong>
+        <div class="step-row">
+            <span class="box lo">L</span>
+            <span class="box target">23</span>
+            <span class="box hi">R</span>
+        </div>
+    </div>
+
+    <h2>3. La Plantilla Estandar</h2>
+    <p>Esta es la unica plantilla que necesitas. Memorizala.</p>
+
+    <pre><code><span class="kw">def</span> <span class="fn">binary_search</span>(nums, target)
+  <span class="var">left</span>  = <span class="num">0</span>
+  <span class="var">right</span> = nums.length - <span class="num">1</span>
+
+  <span class="kw">while</span> left &lt;= right
+    <span class="var">mid</span> = left + (right - left) / <span class="num">2</span>
+
+    <span class="kw">if</span> nums[mid] == target
+      <span class="kw">return</span> mid
+    <span class="kw">elsif</span> nums[mid] &lt; target
+      left  = mid + <span class="num">1</span>
+    <span class="kw">else</span>
+      right = mid - <span class="num">1</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  <span class="kw">return</span> -<span class="num">1</span>
+<span class="kw">end</span></code></pre>
+
+    <div class="callout">
+        <strong>Por que <code>left + (right - left) / 2</code>?</strong>
+        En C++/Java, <code>(left + right) / 2</code> puede <em>desbordar</em> si los indices son enormes.
+        En Ruby los enteros no desbordan, pero usar esta forma muestra que conoces el detalle.
+    </div>
+
+    <h3>Los 3 Puntos Criticos</h3>
+    <table>
+        <tr>
+            <th>Elemento</th>
+            <th>Que hace</th>
+            <th>Error comun</th>
+        </tr>
+        <tr>
+            <td><code>while left &lt;= right</code></td>
+            <td>Incluye el ultimo elemento</td>
+            <td>Usar <code>&lt;</code> y saltarte el ultimo</td>
+        </tr>
+        <tr>
+            <td><code>mid = left + (right - left) / 2</code></td>
+            <td>Calcula el punto medio</td>
+            <td>Olvidar recalcularlo en cada iteracion</td>
+        </tr>
+        <tr>
+            <td><code>left = mid + 1</code> / <code>right = mid - 1</code></td>
+            <td>Descarta la mitad equivocada</td>
+            <td>Usar <code>left = mid</code> (loop infinito)</td>
+        </tr>
+    </table>
+
+    <h2>4. Variantes Clasicas</h2>
+    <p>La plantilla se adapta ligeramente segun lo que pida el problema:</p>
+    <table>
+        <tr>
+            <th>Problema</th>
+            <th>Cambio</th>
+            <th>Retorno</th>
+        </tr>
+        <tr>
+            <td><a href="https://leetcode.com/problems/binary-search/">LeetCode 704</a></td>
+            <td>Plantilla exacta</td>
+            <td><code>mid</code> si existe, <code>-1</code> si no</td>
+        </tr>
+        <tr>
+            <td><a href="https://leetcode.com/problems/search-insert-position/">LeetCode 35</a></td>
+            <td>Si no existe, retorna <code>left</code></td>
+            <td><code>mid</code> o <code>left</code></td>
+        </tr>
+        <tr>
+            <td><a href="https://leetcode.com/problems/first-bad-version/">LeetCode 278</a></td>
+            <td>En vez de <code>nums[mid]</code>, llamas a <code>isBadVersion(mid)</code></td>
+            <td><code>left</code> (primer bad version)</td>
+        </tr>
+    </table>
+
+    <h2>5. Ponte a Prueba</h2>
+
+    <div class="quiz-box">
+        <h3>Pregunta 1</h3>
+        <p>Si un array tiene 128 elementos, cual es el <strong>maximo</strong> numero de comparaciones que hara Binary Search?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer"><strong>7</strong>. Porque <code>2^7 = 128</code>. Cada comparacion reduce el espacio a la mitad.</div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 2</h3>
+        <p>Que pasa si usas <code>while left &lt; right</code> en vez de <code>&lt;=</code> en un array de 1 elemento donde ese unico elemento es el target?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <strong>No lo encuentra.</strong> Con <code>left=0, right=0</code>, la condicion <code>0 &lt; 0</code> es falsa de entrada,
+                asi que el loop nunca se ejecuta y retorna <code>-1</code>.
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 3</h3>
+        <p>Olvidas los <code>+1</code> y <code>-1</code> al actualizar los limites: usas <code>left = mid</code> y <code>right = mid</code>. Que ocurre?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <strong>Loop infinito.</strong> Si <code>left = 3, right = 4</code>, <code>mid = 3</code>,
+                y nums[3] &lt; target, entonces <code>left = 3</code> otra vez. Nunca avanzas.
+            </div>
+        </details>
+    </div>
+
+    <div class="footer">
+        <p>Duda? Preguntale al agente — para eso esta.</p>
+        <p>Proximo: <code>week-05/day-1/practice/01_binary_search.rb</code></p>
+    </div>
+
+</div>
+</body>
+</html>
