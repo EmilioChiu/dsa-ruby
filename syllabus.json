@@ -279,7 +279,7 @@
         {
           "id": "w5d2",
           "label": "BS en respuesta",
-          "status": "locked",
+          "status": "completed",
           "prerequisites": ["w5d1"],
           "bloom_level": "Analyze",
           "topics": ["Reconocer cuándo BS aplica a la respuesta", "Monotonicity"],

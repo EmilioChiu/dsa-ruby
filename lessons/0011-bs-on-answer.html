@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leccion 0011: BS en Respuesta — Minimum Feasible</title>
+    <style>
+        :root {
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --line: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+        }
+        @media (min-width: 640px) {
+            body { padding: 3rem 1.5rem; }
+            .container { padding: 3rem 2.5rem; }
+        }
+        @media print {
+            body { padding: 0.5in; background: white; }
+            .container { box-shadow: none; padding: 0; }
+            .step-visual { break-inside: avoid; }
+        }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            color: var(--text);
+            margin-bottom: .5rem;
+        }
+        h1 .badge {
+            display: inline-block;
+            font-size: .7rem;
+            font-weight: 600;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: .2rem .6rem;
+            border-radius: 999px;
+            vertical-align: middle;
+            margin-left: .5rem;
+        }
+        .subtitle {
+            font-size: 1.05rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+        h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 2.2rem;
+            margin-bottom: .75rem;
+            color: var(--text);
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: .35rem;
+        }
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: .5rem;
+            color: #334155;
+        }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-bottom: 1rem; padding-left: 1.25rem; }
+        li { margin-bottom: .4rem; }
+
+        .callout {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout strong { color: var(--accent); }
+
+        .callout-warn {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout-warn strong { color: #b45309; }
+
+        .callout-success {
+            background: #d1fae5;
+            border-left: 4px solid #22c55e;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout-success strong { color: #047857; }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem 1.5rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+            font-size: .85rem;
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+            tab-size: 2;
+        }
+        pre .kw  { color: #c084fc; }
+        pre .op  { color: #f472b6; }
+        pre .cm  { color: #6b7280; font-style: italic; }
+        pre .str { color: #34d399; }
+        pre .num { color: #fbbf24; }
+        pre .fn  { color: #60a5fa; }
+        pre .var { color: #e2e8f0; }
+
+        code:not(pre code) {
+            background: #f1f5f9;
+            color: #1e293b;
+            padding: .15em .4em;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: .85em;
+        }
+
+        .step-visual {
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            font-size: .9rem;
+        }
+        .step-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin-top: .75rem;
+        }
+        .step-row .box {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            padding: .3rem .55rem;
+            border-radius: 4px;
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+        .step-row .box.lo { background: #dbeafe; border-color: #93c5fd; }
+        .step-row .box.hi { background: #fef3c7; border-color: #fbbf24; }
+        .step-row .box.mid { background: #d1fae5; border-color: #6ee7b7; color: #047857; }
+        .step-row .box.target { background: #fce7f3; border-color: #f472b6; color: #be185d; }
+        .step-row .box.elim { opacity: .35; }
+        .step-row .box.feas { background: #d1fae5; border-color: #22c55e; color: #047857; }
+        .step-row .box.infeas { background: #fee2e2; border-color: #f87171; color: #b91c1c; }
+        .arrow { color: #94a3b8; font-size: 1.1rem; }
+
+        .quiz-box {
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            background: #fafafa;
+        }
+        .quiz-box h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+        .quiz-box details {
+            margin-top: .75rem;
+        }
+        .quiz-box summary {
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--accent);
+            padding: .3rem 0;
+        }
+        .quiz-box .answer {
+            padding: .75rem 1rem;
+            background: #f0fdf4;
+            border-left: 3px solid #22c55e;
+            border-radius: 0 6px 6px 0;
+            margin-top: .5rem;
+            font-size: .92rem;
+        }
+
+        .footer {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--line);
+            font-size: .9rem;
+            color: #64748b;
+            text-align: center;
+        }
+        .footer a { color: var(--accent); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.25rem;
+            font-size: .9rem;
+        }
+        th, td {
+            padding: .5rem .75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+        }
+        th { background: #f1f5f9; font-weight: 600; }
+        tr:last-child td { border-bottom: none; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>BS en Respuesta <span class="badge">Analisis</span></h1>
+    <p class="subtitle">
+        Ya sabes buscar en un array ordenado. Ahora aprende a buscar en el
+        <em>espacio de respuestas posibles</em> — un patron que aparece cuando
+        el problema pregunta por un minimo o maximo que cumple una condicion.
+    </p>
+
+    <h2>1. BS Clasico vs. BS en Respuesta</h2>
+    <p>
+        En la leccion 0006 aprendiste el BS clasico: buscas un <code>target</code>
+        dentro de un array ordenado. El array <strong>es</strong> tu espacio de busqueda.
+    </p>
+
+    <table>
+        <tr>
+            <th></th>
+            <th>BS Clasico</th>
+            <th>BS en Respuesta</th>
+        </tr>
+        <tr>
+            <td><strong>Que buscas?</strong></td>
+            <td>Un valor en un array</td>
+            <td>El numero minimo/maximo que cumple X</td>
+        </tr>
+        <tr>
+            <td><strong>Espacio de busqueda</strong></td>
+            <td><code>nums[0..n-1]</code></td>
+            <td><code>[min..max]</code> — rango numerico</td>
+        </tr>
+        <tr>
+            <td><strong>Condicion</strong></td>
+            <td><code>nums[mid] == target</code></td>
+            <td><code>feasible?(mid) == true</code></td>
+        </tr>
+        <tr>
+            <td><strong>Monotonicidad</strong></td>
+            <td>Array ordenado asc/desc</td>
+            <td>La condicion es monotona: F..F..T..T o T..T..F..F</td>
+        </tr>
+        <tr>
+            <td><strong>Template</strong></td>
+            <td><code>while left &lt;= right</code></td>
+            <td><code>while left &lt; right</code></td>
+        </tr>
+    </table>
+
+    <h2>2. La Intuicion: "Cual es el minimo X tal que...?"</h2>
+    <p>
+        Muchos problemas de entrevista preguntan por un <strong>minimo</strong>
+        o un <strong>maximo</strong>:
+    </p>
+    <ul>
+        <li>"Cual es la <strong>velocidad minima</strong> para comer todos los bananas en H horas?" (Koko)</li>
+        <li>"Cual es la <strong>capacidad minima</strong> del barco para enviar paquetes en D dias?" (Ship Packages)</li>
+        <li>"Cual es la <strong>raiz cuadrada</strong> de X?" (Sqrt)</li>
+    </ul>
+    <p>
+        En todos estos casos, el array NO es el espacio de busqueda —
+        el <strong>rango de valores posibles de la respuesta</strong> lo es.
+    </p>
+
+    <div class="callout">
+        <strong>La clave:</strong> Si puedes escribir una funcion
+        <code>feasible?(candidato)</code> que retorna true/false <strong>y</strong>
+        esa funcion es monotónica (nunca pasa de true a false, o viceversa),
+        entonces puedes aplicar BS sobre el rango de candidatos.
+    </div>
+
+    <h2>3. La Plantilla Generica</h2>
+    <pre><code><span class="kw">def</span> <span class="fn">find_min_feasible</span>(problem)
+  <span class="var">left</span>  = MINIMO_VALIDO      <span class="cm"># el menor valor que podria funcionar</span>
+  <span class="var">right</span> = MAXIMO_POSIBLE     <span class="cm"># el mayor valor que podria funcionar</span>
+
+  <span class="kw">while</span> left &lt; right          <span class="cm"># estrechamos hasta encontrar el limite</span>
+    <span class="var">mid</span> = left + (right - left) / <span class="num">2</span>
+
+    <span class="kw">if</span> <span class="fn">feasible?</span>(mid)         <span class="cm"># mid funciona? busca uno menor</span>
+      right = mid
+    <span class="kw">else</span>                       <span class="cm"># mid no funciona? necesita uno mayor</span>
+      left  = mid + <span class="num">1</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  left                       <span class="cm"># = right, el minimo valor factible</span>
+<span class="kw">end</span></code></pre>
+
+    <div class="callout-warn">
+        <strong>Cuidado:</strong> Aqui usamos <code>while left &lt; right</code>,
+        NO <code>&lt;=</code>. Por que? Porque no estamos buscando un valor exacto
+        — estamos estrechando un rango hasta que left == right, que es el punto exacto
+        donde la condicion cambia de false a true. Si usas <code>&lt;=</code>,
+        puedes caer en un loop infinito.
+    </div>
+
+    <h3>Cuando el maximo es el que buscas</h3>
+    <p>A veces el problema pide el <strong>maximo</strong> valor que aun cumple algo.
+    En ese caso, invierte la logica:</p>
+    <pre><code><span class="kw">while</span> left &lt; right
+  <span class="var">mid</span> = left + (right - left + <span class="num">1</span>) / <span class="num">2</span>  <span class="cm"># mid "alto" para evitar loop infinito</span>
+
+  <span class="kw">if</span> <span class="fn">feasible?</span>(mid)
+    left  = mid               <span class="cm"># mid funciona, busca uno mayor</span>
+  <span class="kw">else</span>
+    right = mid - <span class="num">1</span>           <span class="cm"># mid no funciona, busca uno menor</span>
+  <span class="kw">end</span>
+<span class="kw">end</span></code></pre>
+
+    <h2>4. Ejemplo Guiado: Sqrt(x)</h2>
+    <p>
+        Buscamos la raiz cuadrada de <code>x = 17</code>, redondeada hacia abajo.
+    </p>
+
+    <h3>Paso 1: Identificar el rango</h3>
+    <p>
+        La raiz de 17 esta entre <code>0</code> y <code>17</code>.
+        Mas precisamente, entre <code>1</code> y <code>17</code>.
+        <code>left = 1, right = 17</code>.
+    </p>
+
+    <h3>Paso 2: Definir feasible?</h3>
+    <p>
+        <code>feasible?(k) = k * k &lt;= x</code>
+    </p>
+    <p>
+        Por que? Si <code>k * k &lt;= 17</code>, entonces
+        <code>k</code> podria ser la raiz (o menor). Buscamos el
+        <strong>maximo</strong> k que cumple esto.
+    </p>
+
+    <div class="callout-success">
+        <strong>Patron:</strong> Nota que <code>k * k &lt;= x</code> es monotónica:
+        [1, 2, 3, 4] cumplen, [5, 6, 7, ..., 17] no cumplen. False, False, ..., True, True.
+    </div>
+
+    <div class="step-visual">
+        <strong>Busqueda en rango [1..17] para x=17:</strong>
+        <div class="step-row">
+            <span class="box lo">L=1</span>
+            <span class="box">2</span>
+            <span class="box">3</span>
+            <span class="box">4</span>
+            <span class="box mid">mid=9</span>
+            <span class="box">10</span>
+            <span class="box">11</span>
+            <span class="box">12</span>
+            <span class="box">13</span>
+            <span class="box">14</span>
+            <span class="box">15</span>
+            <span class="box">16</span>
+            <span class="box hi">R=17</span>
+        </div>
+        <p><code>mid=9, 9*9=81 &gt; 17</code> — no factible. <code>right = mid - 1 = 8</code></p>
+        <div class="step-row">
+            <span class="box lo">L=1</span>
+            <span class="box">2</span>
+            <span class="box">3</span>
+            <span class="box mid">mid=4</span>
+            <span class="box">5</span>
+            <span class="box">6</span>
+            <span class="box">7</span>
+            <span class="box hi">R=8</span>
+        </div>
+        <p><code>mid=4, 4*4=16 &lt;= 17</code> — factible. <code>left = mid = 4</code></p>
+        <div class="step-row">
+            <span class="box lo">L=4</span>
+            <span class="box">5</span>
+            <span class="box mid">mid=6</span>
+            <span class="box">7</span>
+            <span class="box hi">R=8</span>
+        </div>
+        <p><code>mid=6, 6*6=36 &gt; 17</code> — no factible. <code>right = mid - 1 = 5</code></p>
+        <div class="step-row">
+            <span class="box lo">L=4</span>
+            <span class="box mid">mid=5</span>
+            <span class="box hi">R=5</span>
+        </div>
+        <p><code>mid=5, 5*5=25 &gt; 17</code> — no factible. <code>right = mid - 1 = 4</code></p>
+        <div class="step-row">
+            <span class="box lo target">L=4</span>
+            <span class="box hi">R=4</span>
+        </div>
+        <p><code>left == right == 4</code>. Retornamos <code>4</code>. Correcto!</p>
+    </div>
+
+    <h2>5. Ejemplo Guiado: Koko Eating Bananas</h2>
+    <p>
+        <code>piles = [3, 6, 7, 11], h = 8</code>.
+        Buscamos la <strong>velocidad minima</strong> k para comer todos.
+    </p>
+
+    <h3>Identificar el rango</h3>
+    <p>
+        La velocidad minima posible es <code>1</code> (una banana por hora).
+        La maxima es <code>max(piles) = 11</code> (la pila mas grande).
+        <code>left = 1, right = 11</code>.
+    </p>
+
+    <h3>Definir feasible?</h3>
+    <p>Para una velocidad k, calculamos cuantas horas toma comer todas las pilas:</p>
+    <pre><code><span class="kw">def</span> <span class="fn">can_eat_all?</span>(piles, h, k)
+  <span class="var">hours</span> = piles.<span class="fn">sum</span> <span class="kw">do</span> |pile|
+    (pile + k - <span class="num">1</span>) / k  <span class="cm"># ceiling division</span>
+  <span class="kw">end</span>
+  hours &lt;= h
+<span class="kw">end</span></code></pre>
+
+    <p>Esta funcion es monotónica: si k=4 funciona, k=5,6,...11 tambien funcionan.</p>
+
+    <div class="callout">
+        <strong>Ceiling division:</strong> <code>(pile + k - 1) / k</code> es equivalente a
+        <code>ceil(pile / k.to_f)</code> pero sin punto flotante. Memoriza este idiom.
+    </div>
+
+    <p>Con <code>k=4</code>: <code>hours = ceil(3/4)+ceil(6/4)+ceil(7/4)+ceil(11/4) = 1+2+2+3 = 8 &lt;= 8</code>. Funciona!</p>
+    <p>Con <code>k=3</code>: <code>hours = 1+2+3+4 = 10</code>. No funciona.</p>
+    <p>Como <code>feasible?</code> es F-F-F-T-T-T, buscamos el primer true. Respuesta: <code>4</code>.</p>
+
+    <h2>6. El Patron para Identificarlos</h2>
+    <p>Cuando veas un problema, hazte 3 preguntas:</p>
+    <ol>
+        <li><strong>Pide un minimo o maximo?</strong> "Minimum k such that...", "Least capacity..."</li>
+        <li><strong>Puedo escribir feasible?(candidato)?</strong> Una funcion que simule si ese candidato funciona</li>
+        <li><strong>Es monotónica?</strong> Si X funciona, todo Y > X tambien funciona (o viceversa)</li>
+    </ol>
+    <p>Si respondes si a las 3, es BS en respuesta.</p>
+
+    <h2>7. Ponte a Prueba</h2>
+
+    <div class="quiz-box">
+        <h3>Pregunta 1</h3>
+        <p>En Koko, el rango de busqueda es <code>[1..max(piles)]</code>. Por que <code>max(piles)</code> y no <code>sum(piles)</code>?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                Porque si k = max(piles), Koko puede comerse la pila mas grande en 1 hora.
+                Ir mas rapido no reduce las horas (ya no puede comer mas de una pila por hora).
+                <code>max(piles)</code> es el limite superior natural — mas alla no cambia el resultado.
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 2</h3>
+        <p>En Ship Packages, cual es el rango de busqueda para la capacidad del barco?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <code>left = max(weights)</code> (el paquete mas pesado debe caber) y
+                <code>right = sum(weights)</code> (si enviaras todo en un solo dia).
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 3</h3>
+        <p>Que pasa si <code>feasible?</code> no es monotónica? Por ejemplo, funciona con k=5, no con k=6, si con k=7?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <strong>BS no funciona.</strong> El algoritmo depende de poder descartar
+                mitades del rango. Sin monotonicidad, no hay base para decidir que mitad
+                descartar. Tendrias que usar busqueda lineal o fuerza bruta.
+            </div>
+        </details>
+    </div>
+
+    <h2>8. Practica</h2>
+    <p>Abre los archivos en <code>week-05/day-2/practice/</code> y resuelvelos con el agente:</p>
+    <ol>
+        <li><code>01_sqrtx.rb</code> — Facil. Aplica el template de "maximo factible"</li>
+        <li><code>02_koko_eating_bananas.rb</code> — Clasico. El rango y feasible? son la clave</li>
+        <li><code>03_capacity_to_ship.rb</code> — El mas complejo. Identifica rango y escribe can_ship?(capacity)</li>
+    </ol>
+
+    <div class="callout-warn">
+        <strong>Antes de codificar:</strong> Para cada problema, primero escribe en voz alta
+        cual es el rango y la funcion feasible?. Si no puedes, no empieces a codear.
+    </div>
+
+    <div class="footer">
+        <p>Duda? Preguntale al agente — para eso esta.</p>
+        <p>Referencia: <code>reference/0004-bs-on-answer-cheatsheet.html</code></p>
+    </div>
+
+</div>
+</body>
+</html>

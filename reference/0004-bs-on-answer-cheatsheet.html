@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BS on Answer — Cheatsheet | DSA en Ruby</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: rgba(20, 27, 45, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #3b82f6;
+      --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+      --accent: #ec4899;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --font-headings: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .meta-tag {
+      display: inline-block;
+      background: var(--primary-gradient);
+      padding: 0.3rem 0.9rem;
+      border-radius: 50px;
+      font-family: var(--font-headings);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.8rem;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+    h1 {
+      font-family: var(--font-headings);
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(to right, #ffffff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.3rem;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 300;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    @media (max-width: 680px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      break-inside: avoid;
+    }
+    .card-full { grid-column: 1 / -1; }
+    h2 {
+      font-family: var(--font-headings);
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    h2 .icon { font-size: 1.1rem; }
+    h3 {
+      font-family: var(--font-headings);
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 1rem 0 0.5rem;
+      color: #93c5fd;
+    }
+    p, li { font-size: 0.95rem; font-weight: 300; color: var(--text-main); }
+    li { margin-bottom: 0.3rem; }
+    ul, ol { padding-left: 1.3rem; }
+    code {
+      font-family: var(--font-mono);
+      background: rgba(59, 130, 246, 0.15);
+      padding: 0.15rem 0.45rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #93c5fd;
+    }
+    pre {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 0.6rem 0;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+      color: #e2e8f0;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.6rem 0;
+      font-size: 0.9rem;
+    }
+    th, td {
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    th {
+      font-family: var(--font-headings);
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    td { font-weight: 300; }
+    .tag {
+      display: inline-block;
+      padding: 0.15rem 0.6rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: var(--font-headings);
+    }
+    .tag-blue { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+    .tag-green { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+    .tag-yellow { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+    .tag-pink { background: rgba(236, 72, 153, 0.2); color: #f9a8d4; }
+    .complexity { font-family: var(--font-mono); font-size: 0.85rem; }
+    .good { color: var(--success); }
+    .warn { color: var(--warning); }
+    strong { font-weight: 600; color: #ffffff; }
+    .key-insight {
+      border-left: 3px solid var(--primary);
+      padding-left: 1rem;
+      margin: 0.8rem 0;
+      font-style: italic;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin: 1.2rem 0;
+    }
+    @media print {
+      body { background: #fff; color: #1a1a2e; padding: 0; }
+      .card { background: #f8f9fa; border: 1px solid #e2e8f0; box-shadow: none; backdrop-filter: none; }
+      h1 { -webkit-text-fill-color: #1a1a2e; background: none; }
+      h2 .icon { display: none; }
+      h3 { color: #2563eb; }
+      code { background: #e2e8f0; color: #1e293b; }
+      pre { background: #f1f5f9; }
+      pre code { color: #1e293b; }
+      .tag-blue { background: #dbeafe; color: #1d4ed8; }
+      .tag-green { background: #d1fae5; color: #065f46; }
+      .tag-yellow { background: #fef3c7; color: #92400e; }
+      .tag-pink { background: #fce7f3; color: #9d174d; }
+      strong { color: #1a1a2e; }
+      .good { color: #059669; }
+      .warn { color: #d97706; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="meta-tag">Referencia Rapida</span>
+      <h1>BS en Respuesta</h1>
+      <p class="subtitle">Busqueda binaria sobre el espacio de soluciones posibles</p>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h2><span class="icon">&#128270;</span> Cuando Usarlo</h2>
+        <p>Las 3 senales:</p>
+        <ol>
+          <li>Pide un <strong>minimo</strong> o <strong>maximo</strong> valor que cumple algo</li>
+          <li>Puedes escribir <code>feasible?(candidato)</code> que retorna true/false</li>
+          <li><code>feasible?</code> es <strong>monotonica</strong> (F...F...T...T o viceversa)</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h2><span class="icon">&#128200;</span> Monotonicidad</h2>
+        <p>La condicion debe ser monotona en una direccion:</p>
+        <pre><code># Buscando MINIMO factible:
+# F, F, F, F, T, T, T, T
+#          ^ primer true = respuesta
+
+# Buscando MAXIMO factible:
+# T, T, T, T, F, F, F, F
+#          ^ ultimo true = respuesta</code></pre>
+      </div>
+
+      <div class="card card-full">
+        <h2><span class="icon">&#128736;</span> Template: Minimo Factible</h2>
+        <pre><code>def find_min(problem)
+  left  = MIN   # menor valor posible
+  right = MAX   # mayor valor posible
+
+  while left &lt; right
+    mid = left + (right - left) / 2
+
+    if feasible?(mid)
+      right = mid   # funciona, busca menor
+    else
+      left = mid + 1 # no funciona, busca mayor
+    end
+  end
+
+  left
+end</code></pre>
+      </div>
+
+      <div class="card card-full">
+        <h2><span class="icon">&#128736;</span> Template: Maximo Factible</h2>
+        <pre><code>def find_max(problem)
+  left  = MIN
+  right = MAX
+
+  while left &lt; right
+    mid = left + (right - left + 1) / 2  # mid "alto"
+
+    if feasible?(mid)
+      left = mid      # funciona, busca mayor
+    else
+      right = mid - 1 # no funciona, busca menor
+    end
+  end
+
+  left
+end</code></pre>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">
+          Nota el <code>+ 1</code> en el calculo de mid — evita loop infinito cuando left y right son consecutivos.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2><span class="icon">&#9000;</span> Ceiling Division</h2>
+        <p>Calcular horas sin usar floats:</p>
+        <pre><code>hours = (pile + k - 1) / k</code></pre>
+        <p>Equivalente a <code>(pile / k.to_f).ceil</code> pero sin punto flotante.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="icon">&#9888;</span> Errores Comunes</h2>
+        <ul>
+          <li>Usar <code>left &lt;= right</code> en vez de <code>&lt;</code> — loop infinito</li>
+          <li>Olvidar el <code>+ 1</code> en el template de maximo</li>
+          <li>Rango incorrecto (left muy pequeno, right muy grande)</li>
+          <li><code>feasible?</code> no monotónica</li>
+          <li>No reconocer si buscas min o max</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2><span class="icon">&#128279;</span> Problemas Clave</h2>
+        <table>
+          <tr><th>Problema</th><th>Dif.</th><th>Rango</th></tr>
+          <tr>
+            <td>Sqrt(x)</td>
+            <td><span class="tag tag-green">Easy</span></td>
+            <td><code>[0..x]</code></td>
+          </tr>
+          <tr>
+            <td>Koko Eating Bananas</td>
+            <td><span class="tag tag-yellow">Medium</span></td>
+            <td><code>[1..max(piles)]</code></td>
+          </tr>
+          <tr>
+            <td>Ship Within Days</td>
+            <td><span class="tag tag-yellow">Medium</span></td>
+            <td><code>[max(w)..sum(w)]</code></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="card card-full">
+        <h2><span class="icon">&#128218;</span> Checklist para Resolver</h2>
+        <ol>
+          <li>Identificar que pide el problema (minimo o maximo?)</li>
+          <li>Definir el rango: <code>left</code> = valor minimo valido, <code>right</code> = valor maximo posible</li>
+          <li>Escribir <code>feasible?(mid)</code> — simula si con ese valor se cumple la condicion</li>
+          <li>Verificar monotonicidad: si mid funciona, todos los mayores tambien? (o menores)</li>
+          <li>Elegir template (minimo o maximo factible)</li>
+          <li>Probar con ejemplos</li>
+        </ol>
+        <div class="key-insight">
+          Si no puedes escribir <code>feasible?</code> claramente, no es BS en respuesta.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
