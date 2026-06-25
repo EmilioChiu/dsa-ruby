@@ -27,7 +27,23 @@
 ## Output: 11
 
 def find_min(nums)
+  left = 0
+  right = nums.length() - 1
+  first_half_init = nums[0]
 
+  return first_half_init if first_half_init <= nums[right]
+
+  while left < right
+    mid = left + (right - left) / 2
+
+    if nums[mid] >= first_half_init # esta en la primera mitad
+      left = mid + 1 # nos acercamos a la segunda mitad
+    else # mid esta en la segunda mitad
+      right = mid 
+    end
+  end
+
+  nums[left]
 end
 
 if $PROGRAM_NAME == __FILE__
@@ -50,3 +66,5 @@ if $PROGRAM_NAME == __FILE__
 
   puts "--- Todos los tests ejecutados ---"
 end
+
+# revisamos si estamos en la primera o seguna mitad, si estamos en la primera tenemos que seguir aumentando a left 

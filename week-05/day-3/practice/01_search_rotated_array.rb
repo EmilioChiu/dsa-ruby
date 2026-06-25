@@ -29,55 +29,50 @@
 ## Input: nums = [1], target = 0
 ## Output: -1
 
+# ubicar si el target esta en la primera o segunda mitad
+# en caso que esta en la primera mitad asegurarnos de nunca pasarnos a la segunda mitad
+
+
 def search(nums, target)
-  return nums[0] == target ? 0 : -1 if nums.length == 1
-  answer = return_wantend_array(nums, target)
-  array_ordered = answer[1]
-  start = target < nums[0] ? answer[0] : 0
-
-  left = 0 
-  right = array_ordered.length() - 1 
-
-  while left < right
-    mid = left + (right - left) / 2
-
-    return mid + start if array_ordered[mid] == target
-
-    if target > array_ordered[mid]
-      left = mid + 1
-    else 
-      right = mid - 1
-    end
-  end
-
-  array_ordered[left] == target ? start + left : -1
-end
-
-def return_wantend_array(unorder_arr, target)
+  right = nums.length() - 1
   left = 0
-  right = unorder_arr.length() - 1
-  first_part_of_the_array = 0
-  part_of_array_wanted = target >= unorder_arr[left] ? 1 : 2
-  answer = []
+  first_part_of_the_array = nums[0]
 
   while left < right
     mid = left + (right - left) / 2
 
-    if unorder_arr[first_part_of_the_array] > unorder_arr[mid] # indicador si estamos en la segunda parte del array
-      right = mid - 1
-    else
-      left = mid + 1
+    return mid if nums[mid] == target
+
+    if target >= first_part_of_the_array # pregunta si necesita buscar en la primera mitad
+      if nums[mid] < first_part_of_the_array # aqui ya nos pasamos a la segunda mitad, sabemos que si hacemos right = mid - 1 nos acercara o nos pondra en la primera mitad
+        right = mid - 1 
+      else # no nos hemos pasado, podemos seguir buscando
+        go_to = choose_where_to_go(nums, mid, target, right, left)
+        left, right = go_to[:left], go_to[:right]
+      end
+    else # si target se encuentra en la segunda mitad
+      if nums[mid] >= first_part_of_the_array # seguimos en la primera mitad
+        left = mid + 1
+      else
+        go_to = choose_where_to_go(nums, mid, target, right, left)
+        left, right = go_to[:left], go_to[:right]
+      end
     end
   end
-  start = unorder_arr[left] < unorder_arr[left - 1] ? left : left + 1
 
-  if part_of_array_wanted == 1
-    answer = unorder_arr[0...start]
-  else
-    answer = unorder_arr[start..-1]
-  end
-  [start, answer]
+  nums[left] == target ? left : -1
 end
+
+def choose_where_to_go(nums, mid, target, right, left)
+  if nums[mid] > target
+    right = mid - 1
+  else
+    left = mid + 1
+  end
+
+  { left: left, right: right }
+end
+
 
 if $PROGRAM_NAME == __FILE__
   def assert_equal(expected, actual, msg = "")
@@ -110,3 +105,54 @@ end
 # y la segunda que sea para buscar el target en el array ya ordenado y con certeza de que el target esta en esa mitad
 # la otra forma es hacerlo todo en la misma funcion revisar la mitad y checar si es mayor o menor al target y revisar si es mayor o menor a left (esto nos indicara si ya pasamos la primera mitad)
 
+
+# first version:
+# def search(nums, target)
+#   return nums[0] == target ? 0 : -1 if nums.length == 1
+#   answer = return_wantend_array(nums, target)
+#   array_ordered = answer[1]
+#   start = target < nums[0] ? answer[0] : 0
+
+#   left = 0 
+#   right = array_ordered.length() - 1 
+
+#   while left < right
+#     mid = left + (right - left) / 2
+
+#     return mid + start if array_ordered[mid] == target
+
+#     if target > array_ordered[mid]
+#       left = mid + 1
+#     else 
+#       right = mid - 1
+#     end
+#   end
+
+#   array_ordered[left] == target ? start + left : -1
+# end
+
+# def return_wantend_array(unorder_arr, target)
+#   left = 0
+#   right = unorder_arr.length() - 1
+#   first_part_of_the_array = 0
+#   part_of_array_wanted = target >= unorder_arr[left] ? 1 : 2
+#   answer = []
+
+#   while left < right
+#     mid = left + (right - left) / 2
+
+#     if unorder_arr[first_part_of_the_array] > unorder_arr[mid] # indicador si estamos en la segunda parte del array
+#       right = mid - 1
+#     else
+#       left = mid + 1
+#     end
+#   end
+#   start = unorder_arr[left] < unorder_arr[left - 1] ? left : left + 1
+
+#   if part_of_array_wanted == 1
+#     answer = unorder_arr[0...start]
+#   else
+#     answer = unorder_arr[start..-1]
+#   end
+#   [start, answer]
+# end

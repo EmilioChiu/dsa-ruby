@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leccion 0013: BS — El Off-by-One</title>
+    <style>
+        :root {
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --line: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+        }
+        @media (min-width: 640px) {
+            body { padding: 3rem 1.5rem; }
+            .container { padding: 3rem 2.5rem; }
+        }
+        @media print {
+            body { padding: 0.5in; background: white; }
+            .container { box-shadow: none; padding: 0; }
+            .step-visual { break-inside: avoid; }
+        }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            color: var(--text);
+            margin-bottom: .5rem;
+        }
+        h1 .badge {
+            display: inline-block;
+            font-size: .7rem;
+            font-weight: 600;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: .2rem .6rem;
+            border-radius: 999px;
+            vertical-align: middle;
+            margin-left: .5rem;
+        }
+        .subtitle {
+            font-size: 1.05rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+        h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 2.2rem;
+            margin-bottom: .75rem;
+            color: var(--text);
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: .35rem;
+        }
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: .5rem;
+            color: #334155;
+        }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-bottom: 1rem; padding-left: 1.25rem; }
+        li { margin-bottom: .4rem; }
+
+        .callout {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout strong { color: var(--accent); }
+
+        .callout-warn {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout-warn strong { color: #b45309; }
+
+        .callout-success {
+            background: #d1fae5;
+            border-left: 4px solid #22c55e;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout-success strong { color: #047857; }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem 1.5rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+            font-size: .85rem;
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+            tab-size: 2;
+        }
+        pre .kw  { color: #c084fc; }
+        pre .op  { color: #f472b6; }
+        pre .cm  { color: #6b7280; font-style: italic; }
+        pre .str { color: #34d399; }
+        pre .num { color: #fbbf24; }
+        pre .fn  { color: #60a5fa; }
+        pre .var { color: #e2e8f0; }
+
+        code:not(pre code) {
+            background: #f1f5f9;
+            color: #1e293b;
+            padding: .15em .4em;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: .85em;
+        }
+
+        .step-visual {
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            font-size: .9rem;
+            overflow-x: auto;
+        }
+        .array-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin: .5rem 0;
+            align-items: center;
+        }
+        .array-row .cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            padding: .3rem .55rem;
+            border-radius: 4px;
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            min-width: 1.8rem;
+            text-align: center;
+        }
+        .array-row .cell.lo { background: #dbeafe; border-color: #93c5fd; }
+        .array-row .cell.hi { background: #fef3c7; border-color: #fbbf24; }
+        .array-row .cell.mid { background: #d1fae5; border-color: #6ee7b7; color: #047857; font-weight: 700; }
+        .array-row .cell.kept { background: #f0fdf4; border-color: #86efac; }
+        .array-row .cell.discard { opacity: .3; }
+        .array-row .label {
+            font-size: .7rem;
+            color: #64748b;
+            margin-top: .15rem;
+        }
+        .arrow { color: #94a3b8; font-size: 1.1rem; }
+
+        .invariant-box {
+            border: 2px solid var(--accent);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            background: #f0f7ff;
+        }
+        .invariant-box h3 {
+            margin-top: 0;
+            color: var(--accent);
+        }
+
+        .quiz-box {
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            background: #fafafa;
+        }
+        .quiz-box h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+        .quiz-box details {
+            margin-top: .75rem;
+        }
+        .quiz-box summary {
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--accent);
+            padding: .3rem 0;
+        }
+        .quiz-box .answer {
+            padding: .75rem 1rem;
+            background: #f0fdf4;
+            border-left: 3px solid #22c55e;
+            border-radius: 0 6px 6px 0;
+            margin-top: .5rem;
+            font-size: .92rem;
+        }
+        .quiz-box .answer code { background: #e8f5e9; }
+
+        .decision-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.25rem;
+            font-size: .9rem;
+        }
+        .decision-table th, .decision-table td {
+            padding: .6rem .75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+        }
+        .decision-table th { background: #f1f5f9; font-weight: 600; }
+        .decision-table tr:last-child td { border-bottom: none; }
+        .decision-table .safe { background: #d1fae5; color: #047857; font-weight: 600; }
+        .decision-table .danger { background: #fee2e2; color: #b91c1c; font-weight: 600; }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: .75rem;
+            margin-bottom: .75rem;
+            padding: .6rem .75rem;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .flow-step .num {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 1.5rem;
+        }
+        .flow-step .desc { flex: 1; }
+        .flow-step .action {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .85rem;
+            padding: .2rem .5rem;
+            border-radius: 4px;
+            background: var(--code-bg);
+            color: var(--code-text);
+            white-space: nowrap;
+        }
+
+        .footer {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--line);
+            font-size: .9rem;
+            color: #64748b;
+            text-align: center;
+        }
+        .footer a { color: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>BS: El Off-by-One <span class="badge">mid +/- 1</span></h1>
+    <p class="subtitle">
+        La fuente mas comun de bugs en Binary Search no es la logica —
+        es decidir si el <code>mid</code> actual puede ser la respuesta o no.
+    </p>
+
+    <h2>1. El Problema</h2>
+    <p>
+        Cuando haces BS con <code>while left &lt; right</code>, en cada paso
+        <strong>descartas</strong> una porcion del array. La pregunta es:
+        el <code>mid</code> actual, puede ser la respuesta o no?
+    </p>
+    <p>
+        Si te equivocas obtienes:
+    </p>
+    <ul>
+        <li><code>right = mid - 1</code> cuando debio ser <code>right = mid</code> &rarr; <strong>descartas la respuesta</strong></li>
+        <li><code>right = mid</code> cuando debio ser <code>right = mid - 1</code> &rarr; <strong>loop infinito</strong></li>
+    </ul>
+
+    <div class="callout-warn">
+        <strong>El off-by-one no es "siempre inevitable".</strong>
+        No es un error aleatorio. Es una decision consciente que tomas
+        basada en una pregunta: <em>"mid es candidato valido o no?"</em>
+    </div>
+
+    <h2>2. El Loop Invariant</h2>
+
+    <div class="invariant-box">
+        <h3>Que contiene [left..right]?</h3>
+        <p>
+            Cuando usas <code>while left &lt; right</code>, el invariante es:
+            <br>
+            <strong>"La respuesta esta en [left..right], si es que existe."</strong>
+            <br><br>
+            Cada iteracion debe <strong>reducir</strong> el rango pero
+            <strong>sin perder</strong> la respuesta.
+        </p>
+    </div>
+
+    <p>Esto significa: cuando examinas <code>mid</code>, preguntas:</p>
+    <ul>
+        <li><strong>Puedo probar que mid NO es la respuesta?</strong> &rarr; descartalo con <code>+1</code> o <code>-1</code></li>
+        <li><strong>No puedo descartarlo?</strong> &rarr; conservalo con <code>= mid</code></li>
+    </ul>
+
+    <h2>3. Los 4 Movimientos</h2>
+
+    <table class="decision-table">
+        <tr>
+            <th>Movimiento</th>
+            <th>Significa</th>
+            <th>Riesgo</th>
+        </tr>
+        <tr>
+            <td><code>left = mid + 1</code></td>
+            <td>Descarto mid y todo lo que esta a su izquierda</td>
+            <td class="safe">Seguro si mid no puede ser la respuesta</td>
+        </tr>
+        <tr>
+            <td><code>right = mid - 1</code></td>
+            <td>Descarto mid y todo lo que esta a su derecha</td>
+            <td class="safe">Seguro si mid no puede ser la respuesta</td>
+        </tr>
+        <tr>
+            <td><code>right = mid</code></td>
+            <td>Conservo mid como candidato, descarto lo que esta a su derecha</td>
+            <td class="safe">Seguro si mid podria ser la respuesta</td>
+        </tr>
+        <tr>
+            <td><code>left = mid</code></td>
+            <td>Conservo mid como candidato, descarto lo que esta a su izquierda</td>
+            <td class="danger">PELIGROSO: puede causar loop infinito si <code>left + 1 == right</code></td>
+        </tr>
+    </table>
+
+    <div class="callout">
+        <strong>Regla de oro:</strong> El movimiento <code>left = mid</code> es el unico
+        que puede causar loop infinito (cuando solo quedan 2 elementos). Si lo usas,
+        <strong>necesitas</strong> el ceiling en mid: <code>mid = left + (right - left + 1) / 2</code>.
+        Los otros 3 movimientos son siempre seguros.
+    </div>
+
+    <h2>4. Visualizacion: Find Minimum</h2>
+    <p>Veamos <code>nums = [3,4,5,6,7,1,2]</code>, buscando el minimo.</p>
+
+    <div class="callout">
+        <strong>Decisión:</strong> Cuando <code>nums[mid] &lt; first_half_init</code>,
+        <code>mid</code> esta en la segunda mitad y <strong>podria ser el minimo</strong>.
+        No podemos descartarlo &rarr; <code>right = mid</code>.
+    </div>
+
+    <div class="step-visual">
+        <strong>Iteracion 1:</strong> <code>left=0, right=6, mid=3</code>
+        <div class="array-row">
+            <span class="cell lo">L</span>
+            <span class="cell kept">3</span>
+            <span class="cell kept">4</span>
+            <span class="cell kept">5</span>
+            <span class="cell mid">6</span>
+            <span class="cell kept">7</span>
+            <span class="cell kept">1</span>
+            <span class="cell hi">R</span>
+        </div>
+        <p><code>nums[3]=6 &gt;= first_half=3</code> &rarr; primera mitad, no puede ser el minimo &rarr; <span class="action">left = mid + 1 = 4</span></p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Iteracion 2:</strong> <code>left=4, right=6, mid=5</code>
+        <div class="array-row">
+            <span class="cell lo">L</span>
+            <span class="cell kept">7</span>
+            <span class="cell mid">1</span>
+            <span class="cell kept">2</span>
+            <span class="cell hi">R</span>
+        </div>
+        <p><code>nums[5]=1 &lt; first_half=3</code> &rarr; segunda mitad, <strong>podria ser el minimo</strong> &rarr; <span class="action">right = mid = 5</span></p>
+        <p class="callout-success" style="margin:.5rem 0 0; font-size:.85rem;">
+            <strong>Si usaras <code>right = mid - 1 = 4</code>:</strong> descartarias el 1!
+            left=4, right=4 &rarr; nums[4]=7. Respuesta incorrecta.
+        </p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Iteracion 3:</strong> <code>left=4, right=5, mid=4</code>
+        <div class="array-row">
+            <span class="cell lo">L</span>
+            <span class="cell mid">7</span>
+            <span class="cell kept">1</span>
+            <span class="cell hi">R</span>
+        </div>
+        <p><code>nums[4]=7 &gt;= 3</code> &rarr; primera mitad &rarr; <span class="action">left = mid + 1 = 5</span></p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Fin:</strong> <code>left=5, right=5</code>
+        <div class="array-row">
+            <span class="cell lo">L</span>
+            <span class="cell hi">R</span>
+            <span class="cell mid">1</span>
+        </div>
+        <p><code>nums[5] = 1</code> &rarr; respuesta correcta!</p>
+    </div>
+
+    <h2>5. Comparacion: Tu Caso vs Templetes</h2>
+
+    <table class="decision-table">
+        <tr>
+            <th>Template</th>
+            <th>Condicion</th>
+            <th>mid puede ser la respuesta?</th>
+            <th>Accion</th>
+        </tr>
+        <tr>
+            <td>Find Min (tu version)</td>
+            <td><code>nums[mid] &lt; first_half</code></td>
+            <td>Si</td>
+            <td><code>right = mid</code></td>
+        </tr>
+        <tr>
+            <td>Find Min (canonica)</td>
+            <td><code>nums[mid] &lt; nums[right]</code></td>
+            <td>Si</td>
+            <td><code>right = mid</code></td>
+        </tr>
+        <tr>
+            <td>BS clasico</td>
+            <td><code>nums[mid] &gt; target</code></td>
+            <td>No (ya lo revisamos)</td>
+            <td><code>right = mid - 1</code></td>
+        </tr>
+        <tr>
+            <td>Search Rotated</td>
+            <td><code>nums[mid] != target</code></td>
+            <td>No (si fuera, ya retornamos)</td>
+            <td><code>mid +/- 1</code></td>
+        </tr>
+        <tr>
+            <td>BS en respuesta (min factible)</td>
+            <td><code>feasible?(mid)</code></td>
+            <td>Si</td>
+            <td><code>right = mid</code></td>
+        </tr>
+        <tr>
+            <td>Find Peak</td>
+            <td><code>nums[mid] &lt; nums[mid+1]</code></td>
+            <td>No (el pico esta a la derecha)</td>
+            <td><code>left = mid + 1</code></td>
+        </tr>
+    </table>
+
+    <div class="callout-success">
+        <strong>Patron:</strong> Cada vez que la condicion te dice
+        "esto podria ser la respuesta", usas <code>= mid</code> (sin +/- 1).
+        Cada vez que la condicion descarta <code>mid</code>, usas <code>mid +/- 1</code>.
+    </div>
+
+    <h2>6. El Unico Caso Peligroso: <code>left = mid</code></h2>
+
+    <p>
+        <code>right = mid</code> es siempre seguro. Pero <code>left = mid</code>
+        puede causar loop infinito. Por que?
+    </p>
+
+    <div class="step-visual">
+        <strong>left = mid SIN ceiling:</strong>
+        <p><code>left=3, right=4, mid = 3 + (4-3)/2 = 3</code></p>
+        <div class="array-row">
+            <span class="cell lo">L</span>
+            <span class="cell mid">X</span>
+            <span class="cell hi">R</span>
+        </div>
+        <p><code>left = mid = 3</code> &rarr; <code>left=3, right=4</code> &rarr; <strong>no avanzamos!</strong> 🔁</p>
+    </div>
+
+    <div class="step-visual">
+        <strong>left = mid CON ceiling:</strong>
+        <p><code>left=3, right=4, mid = 3 + (4-3+1)/2 = 4</code></p>
+        <div class="array-row">
+            <span class="cell lo">L</span>
+            <span class="cell hi">R</span>
+            <span class="cell mid">X</span>
+        </div>
+        <p><code>left = mid = 4</code> &rarr; <code>left=4, right=4</code> &rarr; loop termina. Seguro!</p>
+    </div>
+
+    <div class="callout-warn">
+        <strong>Nunca uses <code>left = mid</code> sin el ceiling.</strong>
+        Es la unica combinacion que puede causar loop infinito.
+        <code>right = mid</code>, <code>left = mid + 1</code> y <code>right = mid - 1</code>
+        son siempre seguros (siempre reducen el rango).
+    </div>
+
+    <h2>7. Ponte a Prueba</h2>
+
+    <div class="quiz-box">
+        <h3>Pregunta 1</h3>
+        <p>En Find Min, <code>nums[mid] = 2, first_half = 5</code>. <code>mid</code> puede ser el minimo?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <strong>Si.</strong> <code>2 &lt; 5</code>, asi que mid esta en la segunda mitad
+                (la de los numeros chicos). Podria ser el minimo &rarr; <code>right = mid</code>.
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 2</h3>
+        <p>En Find Min, <code>nums[mid] = 8, first_half = 3</code>. <code>mid</code> puede ser el minimo?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <strong>No.</strong> <code>8 &gt;= 3</code>, asi que mid esta en la primera mitad
+                (los numeros grandes). El minimo no puede estar aqui &rarr; <code>left = mid + 1</code>.
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 3</h3>
+        <p>En BS clasico, <code>nums[mid] = 15, target = 10</code>. Usas <code>right = mid</code> o <code>right = mid - 1</code>?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <code>right = mid - 1</code>. Por que? Porque ya verificaste que
+                <code>nums[mid] != target</code> (si fuera igual, ya habrias retornado).
+                Como <code>15 &gt; 10</code>, sabes que mid NO es la respuesta
+                y todo lo que esta a su derecha tampoco. Descartalo completamente.
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 4</h3>
+        <p>Que pasa si cambias <code>right = mid</code> por <code>right = mid - 1</code> en Find Min con <code>[4,5,6,7,8,1,2,3]</code>?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                El minimo es <code>1</code> en indice 5.<br>
+                Cuando <code>mid=5, nums[5]=1</code> y haces <code>right=4</code>,
+                descartas el indice 5 y el minimo se pierde.
+                El loop termina con <code>nums[4]=8</code> como respuesta &rarr; incorrecto.
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 5</h3>
+        <p>Por que <code>left = mid</code> puede causar loop infinito pero <code>right = mid</code> no?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                Porque <code>mid</code> se calcula con piso (truncado hacia abajo).
+                Si <code>left=3, right=4</code>, <code>mid = 3 + (4-3)/2 = 3</code>.
+                <code>left = mid = 3</code> &rarr; no avanza. 🔁<br><br>
+                Pero con <code>right = mid</code>: <code>mid=3, right=3</code> &rarr; left=3, right=3 &rarr; termina.
+                O <code>left = mid + 1 = 4</code> &rarr; left=4, right=4 &rarr; termina.
+                <br><br>
+                <strong>El piso en mid hace que left=mid sea peligroso,
+                pero right=mid siempre reduce el rango.</strong>
+            </div>
+        </details>
+    </div>
+
+    <h2>8. Resumen: Arbol de Decision</h2>
+
+    <pre><code><span class="kw">Al examinar mid:</span>
+
+<span class="kw">if</span> <span class="fn">nums[mid] es la respuesta?</span>
+  <span class="kw">return</span> mid
+
+<span class="kw">if</span> <span class="fn">puedo probar que mid NO es la respuesta?</span>
+  left  = mid + <span class="num">1</span>   <span class="cm"># o</span>
+  right = mid - <span class="num">1</span>
+
+<span class="kw">else</span>  <span class="cm"># mid PODRIA ser la respuesta</span>
+  <span class="kw">if</span> <span class="fn">left = mid?</span>   <span class="cm"># PELIGRO: necesita ceiling en mid</span>
+  <span class="kw">if</span> <span class="fn">right = mid?</span>  <span class="cm"># Seguro siempre</span></code></pre>
+
+    <div class="footer">
+        <p>Duda? Preguntale al agente — para eso esta.</p>
+        <p>Referencia: <code>reference/0005-bs-rotated-array-cheatsheet.html</code></p>
+    </div>
+
+</div>
+</body>
+</html>
