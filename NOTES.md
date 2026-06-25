@@ -37,6 +37,7 @@
 - **Próximo milestone**: w5d2 (BS en respuesta — Koko Eating Bananas, etc.).
 
 ## Sesión 2026-06-24 — BS en Rotated Array (w5d3)
-- **Logro**: Lección 0012 creada (BS en rotated array con tres patrones: Search, Find Min, Peak Element).
-- **Material**: Lección HTML + cheatsheet + 3 practice files.
-- **Siguiente**: Resolver los problemas con el agente.
+- **Logro**: Resueltos LC 33, 153, 162. Entendido el patrón de BS en arrays rotados.
+- **Aprendizajes clave**: Diferencia entre `right = mid` y `right = mid - 1` según si mid puede ser la respuesta; `>=` vs `>` en la condición de pertenencia a mitad (bug corregido de `target > nums[0]` a `target >= nums[0]`).
+- **Lección de refuerzo**: 0013-binary-search-off-by-one.html (loop invariant, 4 movimientos, cuándo cada uno es seguro).
+- **Siguiente**: w5d4 (BS avanzado — BS en 2D, elegir entre estrategias).

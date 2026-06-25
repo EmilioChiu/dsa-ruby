@@ -27,7 +27,20 @@
 ## Output: 5 (nums[5] = 6 is a peak) or 1 (nums[1] = 2)
 
 def find_peak_element(nums)
+  left = 0
+  right = nums.length() - 1
 
+  while left < right
+    mid = left + (right - left) / 2
+
+    if nums[mid+1] > nums[mid]
+      left = mid + 1
+    else
+      right = mid
+    end
+  end
+
+  left
 end
 
 if $PROGRAM_NAME == __FILE__
@@ -53,3 +66,7 @@ if $PROGRAM_NAME == __FILE__
 
   puts "--- Todos los tests ejecutados ---"
 end
+
+# por lo que entendi entra un array donde puede se tiene que revisar los vecinos de mid, ej:
+# si mid + 1 es mayor se hace un left = mid + 1
+# si no se puede hacer un right = mid
