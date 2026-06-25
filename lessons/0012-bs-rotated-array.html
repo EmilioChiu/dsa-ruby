@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leccion 0012: BS en Rotated Array</title>
+    <style>
+        :root {
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --line: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+        }
+        @media (min-width: 640px) {
+            body { padding: 3rem 1.5rem; }
+            .container { padding: 3rem 2.5rem; }
+        }
+        @media print {
+            body { padding: 0.5in; background: white; }
+            .container { box-shadow: none; padding: 0; }
+            .step-visual { break-inside: avoid; }
+        }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            color: var(--text);
+            margin-bottom: .5rem;
+        }
+        h1 .badge {
+            display: inline-block;
+            font-size: .7rem;
+            font-weight: 600;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: .2rem .6rem;
+            border-radius: 999px;
+            vertical-align: middle;
+            margin-left: .5rem;
+        }
+        .subtitle {
+            font-size: 1.05rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+        h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 2.2rem;
+            margin-bottom: .75rem;
+            color: var(--text);
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: .35rem;
+        }
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: .5rem;
+            color: #334155;
+        }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-bottom: 1rem; padding-left: 1.25rem; }
+        li { margin-bottom: .4rem; }
+
+        .callout {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout strong { color: var(--accent); }
+
+        .callout-warn {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout-warn strong { color: #b45309; }
+
+        .callout-success {
+            background: #d1fae5;
+            border-left: 4px solid #22c55e;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout-success strong { color: #047857; }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem 1.5rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+            font-size: .85rem;
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+            tab-size: 2;
+        }
+        pre .kw  { color: #c084fc; }
+        pre .op  { color: #f472b6; }
+        pre .cm  { color: #6b7280; font-style: italic; }
+        pre .str { color: #34d399; }
+        pre .num { color: #fbbf24; }
+        pre .fn  { color: #60a5fa; }
+        pre .var { color: #e2e8f0; }
+
+        code:not(pre code) {
+            background: #f1f5f9;
+            color: #1e293b;
+            padding: .15em .4em;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: .85em;
+        }
+
+        .step-visual {
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            font-size: .9rem;
+        }
+        .step-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin-top: .75rem;
+        }
+        .step-row .box {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            padding: .3rem .55rem;
+            border-radius: 4px;
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+        .step-row .box.lo { background: #dbeafe; border-color: #93c5fd; }
+        .step-row .box.hi { background: #fef3c7; border-color: #fbbf24; }
+        .step-row .box.mid { background: #d1fae5; border-color: #6ee7b7; color: #047857; }
+        .step-row .box.target { background: #fce7f3; border-color: #f472b6; color: #be185d; }
+        .step-row .box.elim { opacity: .35; }
+        .step-row .box.sorted-half { background: #e0f2fe; border-color: #7dd3fc; color: #0369a1; }
+        .arrow { color: #94a3b8; font-size: 1.1rem; }
+
+        .quiz-box {
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            background: #fafafa;
+        }
+        .quiz-box h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+        .quiz-box details {
+            margin-top: .75rem;
+        }
+        .quiz-box summary {
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--accent);
+            padding: .3rem 0;
+        }
+        .quiz-box .answer {
+            padding: .75rem 1rem;
+            background: #f0fdf4;
+            border-left: 3px solid #22c55e;
+            border-radius: 0 6px 6px 0;
+            margin-top: .5rem;
+            font-size: .92rem;
+        }
+
+        .footer {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--line);
+            font-size: .9rem;
+            color: #64748b;
+            text-align: center;
+        }
+        .footer a { color: var(--accent); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.25rem;
+            font-size: .9rem;
+        }
+        th, td {
+            padding: .5rem .75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+        }
+        th { background: #f1f5f9; font-weight: 600; }
+        tr:last-child td { border-bottom: none; }
+
+        .array-viz {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .25rem;
+            margin: .5rem 0;
+        }
+        .array-viz .cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            padding: .35rem .5rem;
+            border-radius: 4px;
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            min-width: 1.8rem;
+            text-align: center;
+        }
+        .array-viz .cell.sorted { background: #dcfce7; border-color: #86efac; }
+        .array-viz .cell.rotated { background: #fce7f3; border-color: #f9a8d4; }
+        .array-viz .cell.pivot { background: #fef3c7; border-color: #fbbf24; font-weight: 700; }
+        .array-viz .cell.target-found { background: #dbeafe; border-color: #93c5fd; font-weight: 700; }
+        .array-viz .label {
+            font-size: .7rem;
+            color: #64748b;
+            text-align: center;
+            margin-top: .15rem;
+        }
+        .array-viz-container {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: .75rem;
+            margin: .5rem 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>BS en Rotated Array <span class="badge">O(log n)</span></h1>
+    <p class="subtitle">
+        El array esta ordenado... pero "roto". Como aplicas Binary Search cuando
+        la posicion del pivot es desconocida? La clave: al menos una mitad siempre
+        esta ordenada.
+    </p>
+
+    <h2>1. Que es un Array Rotado?</h2>
+    <p>
+        Un array ordenado ascendentemente se <strong>rota</strong> cuando tomamos
+        algunos elementos del inicio y los movemos al final. Por ejemplo:
+    </p>
+
+    <div class="array-viz-container">
+        <p><strong>Original:</strong> <code>[0, 1, 2, 4, 5, 6, 7]</code></p>
+        <div class="array-viz">
+            <span class="cell">0</span>
+            <span class="cell">1</span>
+            <span class="cell">2</span>
+            <span class="cell">4</span>
+            <span class="cell">5</span>
+            <span class="cell">6</span>
+            <span class="cell">7</span>
+        </div>
+    </div>
+
+    <div class="array-viz-container">
+        <p><strong>Rotado en k=3:</strong> <code>[4, 5, 6, 7, 0, 1, 2]</code></p>
+        <div class="array-viz">
+            <span class="cell rotated">4</span>
+            <span class="cell rotated">5</span>
+            <span class="cell rotated">6</span>
+            <span class="cell rotated">7</span>
+            <span class="cell sorted">0</span>
+            <span class="cell sorted">1</span>
+            <span class="cell sorted">2</span>
+        </div>
+        <p style="font-size:.85rem; color: #64748b; margin-top: .25rem;">
+            Los elementos <span style="color:#be185d;">rosados</span> se movieron al inicio.
+            Los <span style="color:#047857;">verdes</span> quedaron en su orden original.
+        </p>
+    </div>
+
+    <div class="callout">
+        <strong>Propiedad fundamental:</strong> En cualquier array rotado,
+        <strong>al menos una mitad (izquierda o derecha) esta completamente ordenada</strong>.
+        Esto es lo que explota Binary Search.
+    </div>
+
+    <p>
+        El pivot es el punto donde ocurrio la rotacion. En el ejemplo, el pivot
+        esta entre el <code>7</code> y el <code>0</code>. Los elementos a la izquierda
+        del pivot son mayores que los de la derecha.
+    </p>
+
+    <h2>2. Search in Rotated Sorted Array (LC 33)</h2>
+    <p>
+        <strong>Problema:</strong> Dado un array rotado <code>nums</code> y un
+        <code>target</code>, encuentra el indice del target o retorna <code>-1</code>.
+    </p>
+
+    <h3>La Intuicion</h3>
+    <p>
+        En cada paso, calculamos <code>mid</code>. Luego determinamos cual mitad
+        esta ordenada comparando <code>nums[left]</code> con <code>nums[mid]</code>:
+    </p>
+    <ul>
+        <li>Si <code>nums[left] &lt;= nums[mid]</code> &rarr; la mitad izquierda esta ordenada</li>
+        <li>Sino &rarr; la mitad derecha esta ordenada</li>
+    </ul>
+    <p>
+        Una vez que sabemos cual mitad esta ordenada, preguntamos:
+        "El target esta dentro de esa mitad ordenada?":
+    </p>
+    <ul>
+        <li>Si <strong>si</strong> &rarr; buscas ahi</li>
+        <li>Si <strong>no</strong> &rarr; buscas en la otra mitad</li>
+    </ul>
+
+    <h3>La Plantilla</h3>
+    <pre><code><span class="kw">def</span> <span class="fn">search</span>(nums, target)
+  <span class="var">left</span>  = <span class="num">0</span>
+  <span class="var">right</span> = nums.length - <span class="num">1</span>
+
+  <span class="kw">while</span> left &lt;= right
+    <span class="var">mid</span> = left + (right - left) / <span class="num">2</span>
+    <span class="kw">return</span> mid <span class="kw">if</span> nums[mid] == target
+
+    <span class="kw">if</span> nums[left] &lt;= nums[mid]         <span class="cm"># mitad izquierda ordenada</span>
+      <span class="kw">if</span> nums[left] &lt;= target <span class="op">&amp;&amp;</span> target &lt; nums[mid]
+        right = mid - <span class="num">1</span>                   <span class="cm"># target en la izquierda</span>
+      <span class="kw">else</span>
+        left  = mid + <span class="num">1</span>                   <span class="cm"># target en la derecha</span>
+      <span class="kw">end</span>
+    <span class="kw">else</span>                                   <span class="cm"># mitad derecha ordenada</span>
+      <span class="kw">if</span> nums[mid] &lt; target <span class="op">&amp;&amp;</span> target &lt;= nums[right]
+        left  = mid + <span class="num">1</span>                   <span class="cm"># target en la derecha</span>
+      <span class="kw">else</span>
+        right = mid - <span class="num">1</span>                   <span class="cm"># target en la izquierda</span>
+      <span class="kw">end</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  -<span class="num">1</span>
+<span class="kw">end</span></code></pre>
+
+    <h3>Visualizacion Paso a Paso</h3>
+    <p>Buscamos <code>target = 0</code> en <code>nums = [4, 5, 6, 7, 0, 1, 2]</code>:</p>
+
+    <div class="step-visual">
+        <strong>Paso 1:</strong> <code>left=0, right=6, mid=3</code>
+        <div class="array-viz">
+            <span class="cell lo">L</span>
+            <span class="cell">4</span>
+            <span class="cell">5</span>
+            <span class="cell">6</span>
+            <span class="cell mid">7</span>
+            <span class="cell">0</span>
+            <span class="cell">1</span>
+            <span class="cell hi">R</span>
+        </div>
+        <p><code>nums[left]=4 &lt;= nums[mid]=7</code> &rarr; <strong>izquierda ordenada</strong> [4,5,6,7].
+        <code>target=0</code> NO esta entre <code>4</code> y <code>7</code> &rarr; vamos a la <strong>derecha</strong>.</p>
+        <p><code>left = mid + 1 = 4</code></p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Paso 2:</strong> <code>left=4, right=6, mid=5</code>
+        <div class="array-viz">
+            <span class="box lo">L</span>
+            <span class="cell">0</span>
+            <span class="cell mid">1</span>
+            <span class="cell hi">R</span>
+        </div>
+        <p><code>nums[left]=0 &lt;= nums[mid]=1</code> &rarr; <strong>izquierda ordenada</strong> [0,1].
+        <code>target=0</code> SI esta entre <code>0</code> y <code>1</code> &rarr; vamos a la <strong>izquierda</strong>.</p>
+        <p><code>right = mid - 1 = 4</code></p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Paso 3:</strong> <code>left=4, right=4, mid=4</code>
+        <div class="array-viz">
+            <span class="box lo">L</span>
+            <span class="cell target-found">0</span>
+            <span class="box hi">R</span>
+        </div>
+        <p><code>nums[4] == 0 == target</code> &rarr; <strong>encontrado!</strong> Retorna <code>4</code>.</p>
+    </div>
+
+    <div class="callout-warn">
+        <strong>Detalle sutil:</strong> Comparamos con <code>nums[left] &lt;= nums[mid]</code>
+        (no <code>&lt;</code>). Por que? Porque si <code>left == mid</code> (array de 2 elementos),
+        necesitamos que la condicion sea true para considerar la izquierda como ordenada.
+    </div>
+
+    <h2>3. Find Minimum in Rotated Array (LC 153)</h2>
+    <p>
+        <strong>Problema:</strong> Encuentra el <strong>elemento minimo</strong>
+        en un array rotado. Todos los elementos son unicos.
+    </p>
+
+    <h3>La Intuicion</h3>
+    <p>
+        Aqui no buscamos un target — buscamos el pivot. La clave es comparar
+        <code>nums[mid]</code> con <code>nums[right]</code>:
+    </p>
+    <ul>
+        <li>Si <code>nums[mid] &gt; nums[right]</code> &rarr; el pivot esta en la <strong>derecha</strong>
+            (porque lo normal seria que mid &lt; right, asi que hay una "anomalia")</li>
+        <li>Si <code>nums[mid] &lt;= nums[right]</code> &rarr; el pivot esta en la <strong>izquierda</strong>
+            (incluyendo mid)</li>
+    </ul>
+
+    <pre><code><span class="kw">def</span> <span class="fn">find_min</span>(nums)
+  <span class="var">left</span>  = <span class="num">0</span>
+  <span class="var">right</span> = nums.length - <span class="num">1</span>
+
+  <span class="kw">while</span> left &lt; right
+    <span class="var">mid</span> = left + (right - left) / <span class="num">2</span>
+
+    <span class="kw">if</span> nums[mid] &gt; nums[right]
+      left  = mid + <span class="num">1</span>     <span class="cm"># minimo esta en la derecha</span>
+    <span class="kw">else</span>
+      right = mid            <span class="cm"># minimo esta en la izquierda (incl. mid)</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  nums[left]
+<span class="kw">end</span></code></pre>
+
+    <h3>Visualizacion</h3>
+    <p><code>nums = [4, 5, 6, 7, 0, 1, 2]</code>:</p>
+
+    <div class="step-visual">
+        <strong>Paso 1:</strong> <code>left=0, right=6, mid=3</code>
+        <div class="array-viz">
+            <span class="cell lo">L</span>
+            <span class="cell">4</span>
+            <span class="cell">5</span>
+            <span class="cell">6</span>
+            <span class="cell mid">7</span>
+            <span class="cell">0</span>
+            <span class="cell">1</span>
+            <span class="cell hi">R</span>
+        </div>
+        <p><code>nums[mid]=7 &gt; nums[right]=2</code> &rarr; minimo a la <strong>derecha</strong>.
+        <code>left = mid + 1 = 4</code></p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Paso 2:</strong> <code>left=4, right=6, mid=5</code>
+        <div class="array-viz">
+            <span class="cell lo">L</span>
+            <span class="cell">0</span>
+            <span class="cell mid">1</span>
+            <span class="cell hi">R</span>
+        </div>
+        <p><code>nums[mid]=1 &lt;= nums[right]=2</code> &rarr; minimo a la <strong>izquierda</strong> (incl. mid).
+        <code>right = mid = 5</code></p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Paso 3:</strong> <code>left=4, right=5, mid=4</code>
+        <div class="array-viz">
+            <span class="cell lo">L</span>
+            <span class="cell mid">0</span>
+            <span class="cell hi">R</span>
+        </div>
+        <p><code>nums[mid]=0 &lt;= nums[right]=1</code> &rarr; minimo a la izquierda.
+        <code>right = mid = 4</code></p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Paso 4:</strong> <code>left=4, right=4</code>. <code>left == right</code> &rarr; retorna <code>nums[4] = 0</code>.
+    </div>
+
+    <div class="callout">
+        <strong>Nota:</strong> La condicion <code>while left &lt; right</code> (no <code>&lt;=</code>)
+        porque cuando <code>left == right</code>, hemos encontrado el minimo.
+        Este template es el mismo que usaste en BS en respuesta (leccion 0011).
+    </div>
+
+    <h2>4. Find Peak Element (LC 162)</h2>
+    <p>
+        <strong>Problema:</strong> Un elemento <em>pico</em> es estrictamente mayor
+        que sus vecinos. Encuentra cualquier pico en O(log n).
+    </p>
+
+    <p>
+        Aunque el array NO esta ordenado (ni rotado), el patron de BS aplica porque
+        podemos descartar mitades basados en una propiedad local:
+    </p>
+
+    <ul>
+        <li>Si <code>nums[mid] &lt; nums[mid + 1]</code> &rarr; el pico esta a la <strong>derecha</strong>
+            (la pendiente sube, asi que eventualmente debe bajar)</li>
+        <li>Si <code>nums[mid] &gt;= nums[mid + 1]</code> &rarr; el pico esta a la <strong>izquierda</strong>
+            (incluyendo mid, la pendiente baja)</li>
+    </ul>
+
+    <pre><code><span class="kw">def</span> <span class="fn">find_peak_element</span>(nums)
+  <span class="var">left</span>  = <span class="num">0</span>
+  <span class="var">right</span> = nums.length - <span class="num">1</span>
+
+  <span class="kw">while</span> left &lt; right
+    <span class="var">mid</span> = left + (right - left) / <span class="num">2</span>
+
+    <span class="kw">if</span> nums[mid] &lt; nums[mid + <span class="num">1</span>]
+      left  = mid + <span class="num">1</span>     <span class="cm"># pico a la derecha</span>
+    <span class="kw">else</span>
+      right = mid            <span class="cm"># pico a la izquierda (incl. mid)</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  left                     <span class="cm"># cualquier indice es un pico</span>
+<span class="kw">end</span></code></pre>
+
+    <div class="callout-warn">
+        <strong>Cuidado:</strong> En LC 162, el problema garantiza que
+        <code>nums[-1] = nums[n] = -infinito</code>. Esto asegura que siempre
+        existe al menos un pico y que la estrategia de "seguir la pendiente"
+        funciona.
+    </div>
+
+    <h2>5. Comparacion de los 3 Patrones</h2>
+
+    <table>
+        <tr>
+            <th></th>
+            <th>Search (LC 33)</th>
+            <th>Find Min (LC 153)</th>
+            <th>Peak (LC 162)</th>
+        </tr>
+        <tr>
+            <td><strong>Condicion de comparacion</strong></td>
+            <td><code>nums[left] vs nums[mid]</code></td>
+            <td><code>nums[mid] vs nums[right]</code></td>
+            <td><code>nums[mid] vs nums[mid+1]</code></td>
+        </tr>
+        <tr>
+            <td><strong>Que buscas?</strong></td>
+            <td>Un valor exacto</td>
+            <td>El minimo (pivot)</td>
+            <td>Cualquier pico local</td>
+        </tr>
+        <tr>
+            <td><strong>Loop condition</strong></td>
+            <td><code>left &lt;= right</code></td>
+            <td><code>left &lt; right</code></td>
+            <td><code>left &lt; right</code></td>
+        </tr>
+        <tr>
+            <td><strong>Update left</strong></td>
+            <td><code>mid + 1</code></td>
+            <td><code>mid + 1</code></td>
+            <td><code>mid + 1</code></td>
+        </tr>
+        <tr>
+            <td><strong>Update right</strong></td>
+            <td><code>mid - 1</code></td>
+            <td><code>mid</code></td>
+            <td><code>mid</code></td>
+        </tr>
+        <tr>
+            <td><strong>Retorno</strong></td>
+            <td><code>mid</code> o <code>-1</code></td>
+            <td><code>nums[left]</code></td>
+            <td><code>left</code></td>
+        </tr>
+    </table>
+
+    <h2>6. Ponte a Prueba</h2>
+
+    <div class="quiz-box">
+        <h3>Pregunta 1</h3>
+        <p>
+            En <code>nums = [3, 4, 5, 1, 2]</code>, cual es el array
+            original antes de rotar?
+        </p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <code>[1, 2, 3, 4, 5]</code> — rotado en k=3.
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 2</h3>
+        <p>
+            En LC 33, que pasa si <code>nums[left] &lt;= nums[mid]</code> es true
+            y el target NO esta en ese rango? A donde vas?
+        </p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                Vas a la <strong>derecha</strong> (<code>left = mid + 1</code>).
+                Como la mitad izquierda esta ordenada y el target no esta ahi,
+                la unica posibilidad es la mitad derecha (aunque este "rota").
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 3</h3>
+        <p>
+            En LC 153, por que usamos <code>while left &lt; right</code> en vez
+            de <code>while left &lt;= right</code>?
+        </p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                Porque el minimo es el unico elemento que queda cuando
+                <code>left == right</code>. Con <code>&lt;=</code>, si
+                <code>left == right</code>, calcularias <code>mid</code>
+                y podrias comparar <code>nums[mid]</code> consigo mismo,
+                causando un loop infinito o un resultado incorrecto.
+                El template de "estrechar rango" usa <code>&lt;</code>.
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 4</h3>
+        <p>
+            En Find Peak Element, por que <code>nums[mid] &lt; nums[mid + 1]</code>
+            implica que el pico esta a la derecha?
+        </p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                Porque los extremos del array son <code>-infinito</code>.
+                En mid, la pendiente sube (nums[mid] &lt; nums[mid+1]).
+                Como eventualmente el array debe bajar hacia -infinito
+                en el extremo derecho, en algun punto la tendencia se
+                invierte y ahi hay un pico. No puede ser que la subida
+                sea infinita.
+            </div>
+        </details>
+    </div>
+
+    <h2>7. Practica</h2>
+    <p>Abre los archivos en <code>week-05/day-3/practice/</code>:</p>
+    <ol>
+        <li><code>01_search_rotated_array.rb</code> — <strong>Medium</strong>.
+            Aplica la plantilla de "mitad ordenada". El clasico de rotated BS.</li>
+        <li><code>02_find_min_rotated.rb</code> — <strong>Medium</strong>.
+            Encuentra el minimo. Mas simple que Search pero igual de ingenioso.</li>
+        <li><code>03_find_peak_element.rb</code> — <strong>Medium</strong>.
+            Sigue la pendiente. Un patron distinto: no busca valor exacto.</li>
+    </ol>
+
+    <div class="callout-warn">
+        <strong>Antes de codificar:</strong> Para cada problema, traza mentalmente
+        el algoritmo con un ejemplo pequeño. No copies la plantilla sin entender
+        por que funciona.
+    </div>
+
+    <div class="footer">
+        <p>Duda? Preguntale al agente — para eso esta.</p>
+        <p>Referencia: <code>reference/0005-bs-rotated-array-cheatsheet.html</code></p>
+    </div>
+
+</div>
+</body>
+</html>

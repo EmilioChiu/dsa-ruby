@@ -35,3 +35,8 @@
 - **Logro**: Lección 0006 mejorada (contraste, visualización paso a paso, quizzes). Tres problemas resueltos: LeetCode 704, 35, 278.
 - **Aprendizajes clave**: `left` como respuesta natural al salir del loop; `right = mid - 1` (no `right -= 1`) para O(log n).
 - **Próximo milestone**: w5d2 (BS en respuesta — Koko Eating Bananas, etc.).
+
+## Sesión 2026-06-24 — BS en Rotated Array (w5d3)
+- **Logro**: Lección 0012 creada (BS en rotated array con tres patrones: Search, Find Min, Peak Element).
+- **Material**: Lección HTML + cheatsheet + 3 practice files.
+- **Siguiente**: Resolver los problemas con el agente.

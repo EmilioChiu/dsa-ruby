@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cheatsheet: BS en Rotated Array</title>
+    <style>
+        :root {
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 1.5rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        }
+        @media print {
+            body { padding: 0; background: white; }
+            .container { box-shadow: none; max-width: 100%; }
+            .card { break-inside: avoid; }
+        }
+        h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: .25rem;
+        }
+        .sub {
+            color: #64748b;
+            font-size: .9rem;
+            margin-bottom: 1.25rem;
+        }
+        h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1.25rem 0 .5rem;
+            color: #1e293b;
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: .25rem;
+        }
+        h3 {
+            font-size: .95rem;
+            font-weight: 600;
+            margin: 1rem 0 .35rem;
+            color: #334155;
+        }
+        p { margin-bottom: .5rem; font-size: .88rem; }
+        ul { margin-bottom: .5rem; padding-left: 1.1rem; font-size: .88rem; }
+        li { margin-bottom: .2rem; }
+        code {
+            background: #f1f5f9;
+            color: #1e293b;
+            padding: .15em .35em;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: .82em;
+        }
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: .8rem 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: .78rem;
+            line-height: 1.5;
+            margin-bottom: .8rem;
+            tab-size: 2;
+        }
+        pre .kw  { color: #c084fc; }
+        pre .cm  { color: #6b7280; font-style: italic; }
+        pre .num { color: #fbbf24; }
+        pre .fn  { color: #60a5fa; }
+        pre .var { color: #e2e8f0; }
+        pre .op  { color: #f472b6; }
+
+        .card {
+            background: #fafafa;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: .8rem 1rem;
+            margin-bottom: .75rem;
+        }
+        .card h3 { margin-top: 0; }
+        .card p { margin-bottom: .35rem; }
+
+        .callout {
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+            padding: .6rem .9rem;
+            border-radius: 0 6px 6px 0;
+            margin: .6rem 0;
+            font-size: .85rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: .6rem 0;
+            font-size: .82rem;
+        }
+        th, td {
+            padding: .4rem .6rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th { background: #f1f5f9; font-weight: 600; }
+        tr:last-child td { border-bottom: none; }
+
+        .badge {
+            display: inline-block;
+            font-size: .65rem;
+            font-weight: 600;
+            padding: .15rem .45rem;
+            border-radius: 999px;
+            margin-left: .35rem;
+        }
+        .badge-easy { background: #d1fae5; color: #047857; }
+        .badge-med  { background: #fef3c7; color: #b45309; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>BS en Rotated Array</h1>
+    <p class="sub">Tres patrones: Search, Find Min, Peak Element</p>
+
+    <h2>1. Search in Rotated Sorted Array (LC 33)</h2>
+    <div class="card">
+        <p><strong>Problema:</strong> Encontrar un <code>target</code> en un array rotado. <span class="badge badge-med">Medium</span></p>
+        <p><strong>Clave:</strong> Determina cual mitad esta ordenada, luego verifica si el target esta ahi.</p>
+    </div>
+    <pre><code><span class="kw">def</span> <span class="fn">search</span>(nums, target)
+  left, right = 0, nums.length - 1
+
+  <span class="kw">while</span> left &lt;= right
+    mid = left + (right - left) / 2
+    <span class="kw">return</span> mid <span class="kw">if</span> nums[mid] == target
+
+    <span class="kw">if</span> nums[left] &lt;= nums[mid]         <span class="cm"># izq ordenada</span>
+      <span class="kw">if</span> nums[left] &lt;= target <span class="op">&amp;&amp;</span> target &lt; nums[mid]
+        right = mid - 1
+      <span class="kw">else</span>
+        left  = mid + 1
+      <span class="kw">end</span>
+    <span class="kw">else</span>                                   <span class="cm"># der ordenada</span>
+      <span class="kw">if</span> nums[mid] &lt; target <span class="op">&amp;&amp;</span> target &lt;= nums[right]
+        left  = mid + 1
+      <span class="kw">else</span>
+        right = mid - 1
+      <span class="kw">end</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+  -1
+<span class="kw">end</span></code></pre>
+
+    <h2>2. Find Minimum in Rotated Array (LC 153)</h2>
+    <div class="card">
+        <p><strong>Problema:</strong> Encuentra el elemento minimo en un array rotado. <span class="badge badge-med">Medium</span></p>
+        <p><strong>Clave:</strong> Compara <code>nums[mid]</code> con <code>nums[right]</code>. Si mid > right, el minimo esta a la derecha.</p>
+    </div>
+    <pre><code><span class="kw">def</span> <span class="fn">find_min</span>(nums)
+  left, right = 0, nums.length - 1
+
+  <span class="kw">while</span> left &lt; right
+    mid = left + (right - left) / 2
+
+    <span class="kw">if</span> nums[mid] &gt; nums[right]
+      left  = mid + 1          <span class="cm"># minimo a la derecha</span>
+    <span class="kw">else</span>
+      right = mid              <span class="cm"># minimo a la izquierda (incl. mid)</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+  nums[left]
+<span class="kw">end</span></code></pre>
+
+    <h2>3. Find Peak Element (LC 162)</h2>
+    <div class="card">
+        <p><strong>Problema:</strong> Encuentra cualquier pico (elemento mayor que sus vecinos). <span class="badge badge-med">Medium</span></p>
+        <p><strong>Clave:</strong> Sigue la pendiente ascendente. Compara <code>nums[mid]</code> con <code>nums[mid+1]</code>.</p>
+    </div>
+    <pre><code><span class="kw">def</span> <span class="fn">find_peak_element</span>(nums)
+  left, right = 0, nums.length - 1
+
+  <span class="kw">while</span> left &lt; right
+    mid = left + (right - left) / 2
+
+    <span class="kw">if</span> nums[mid] &lt; nums[mid + 1]
+      left  = mid + 1           <span class="cm"># pico a la derecha</span>
+    <span class="kw">else</span>
+      right = mid               <span class="cm"># pico a la izquierda (incl. mid)</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+  left
+<span class="kw">end</span></code></pre>
+
+    <h2>Comparacion Rapida</h2>
+    <div class="callout">
+        <strong>Regla de oro:</strong> Los 3 usan O(log n) y la misma estructura basica.
+        La diferencia es la <strong>condicion de comparacion</strong> que decide que mitad descartar.
+    </div>
+
+    <table>
+        <tr><th></th><th>Search (33)</th><th>Find Min (153)</th><th>Peak (162)</th></tr>
+        <tr><td><strong>Compara</strong></td><td><code>nums[left] vs nums[mid]</code></td><td><code>nums[mid] vs nums[right]</code></td><td><code>nums[mid] vs nums[mid+1]</code></td></tr>
+        <tr><td><strong>Loop</strong></td><td><code>left &lt;= right</code></td><td><code>left &lt; right</code></td><td><code>left &lt; right</code></td></tr>
+        <tr><td><strong>Retorno</strong></td><td><code>mid</code> o <code>-1</code></td><td><code>nums[left]</code></td><td><code>left</code></td></tr>
+        <tr><td><strong>Update</strong></td><td><code>mid +/- 1</code></td><td><code>left = mid+1</code> / <code>right = mid</code></td><td><code>left = mid+1</code> / <code>right = mid</code></td></tr>
+    </table>
+
+    <h2>Links</h2>
+    <ul>
+        <li><a href="https://leetcode.com/problems/search-in-rotated-sorted-array/">LC 33: Search in Rotated Sorted Array</a></li>
+        <li><a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/">LC 153: Find Minimum in Rotated Sorted Array</a></li>
+        <li><a href="https://leetcode.com/problems/find-peak-element/">LC 162: Find Peak Element</a></li>
+    </ul>
+
+</div>
+</body>
+</html>
