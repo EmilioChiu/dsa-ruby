@@ -41,3 +41,9 @@
 - **Aprendizajes clave**: Diferencia entre `right = mid` y `right = mid - 1` según si mid puede ser la respuesta; `>=` vs `>` en la condición de pertenencia a mitad (bug corregido de `target > nums[0]` a `target >= nums[0]`).
 - **Lección de refuerzo**: 0013-binary-search-off-by-one.html (loop invariant, 4 movimientos, cuándo cada uno es seguro).
 - **Siguiente**: w5d4 (BS avanzado — BS en 2D, elegir entre estrategias).
+
+## Sesion 2026-06-25 — BS en 2D + Framework (w5d4) COMPLETADO
+- **Logro**: Leccion 0014 (BS en 2D + framework de 4 patrones). Mapeo `row = mid / n`, `col = mid % n`.
+- **Practica**: LC 74 (Search a 2D Matrix) resuelto. Todos los tests pasaron.
+- **Aprendizaje clave**: El mapeo 2D a 1D convierte cualquier matriz fully sorted en un array plano. La pregunta correcta no es "esta ordenado?" sino "existe una propiedad monotona?".
+- **Estado**: w5d4 completado. Proximo: w5d5 (Milestone 5 — examen integrador de BS).

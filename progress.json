@@ -1,4 +1,7 @@
 {
-  "pending_concepts": [],
-  "suggested_warmups": []
+  "pending_concepts": ["BS loop invariants — left < right vs left <= right"],
+  "suggested_warmups": ["debt-002"],
+  "current_milestone": "w6d1 (Sorting Algorithms)",
+  "last_session": "2026-06-25",
+  "streak": 22
 }

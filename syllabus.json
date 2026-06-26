@@ -301,18 +301,18 @@
         {
           "id": "w5d4",
           "label": "BS avanzado",
-          "status": "locked",
+          "status": "completed",
           "prerequisites": ["w5d2", "w5d3"],
           "bloom_level": "Evaluate",
           "topics": ["Elegir entre BS y otras estrategias", "BS en 2D"],
           "practice_problems": ["Median of Two Sorted Arrays", "Search 2D Matrix", "First Bad Version"],
           "evidence_path": "week-05/day-4",
-          "notes": "Resolver: median of sorted arrays, peak element"
+          "notes": "LC 74 resuelto. Framework de 4 patrones de BS visto."
         },
         {
-          "id": "w5d5",
-          "label": "Milestone 5 - Binary Search",
-          "status": "locked",
+           "id": "w5d5",
+           "label": "Milestone 5 - Binary Search",
+           "status": "completed",
           "prerequisites": ["w5d2", "w5d3", "w5d4"],
           "bloom_level": "Evaluate",
           "topics": ["Examen integrador semana 5"],

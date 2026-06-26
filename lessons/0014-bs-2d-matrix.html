@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leccion 0014: BS en 2D + Framework de Decision</title>
+    <style>
+        :root {
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --line: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+        }
+        @media (min-width: 640px) {
+            body { padding: 3rem 1.5rem; }
+            .container { padding: 3rem 2.5rem; }
+        }
+        @media print {
+            body { padding: 0.5in; background: white; }
+            .container { box-shadow: none; padding: 0; }
+            .step-visual { break-inside: avoid; }
+        }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            color: var(--text);
+            margin-bottom: .5rem;
+        }
+        h1 .badge {
+            display: inline-block;
+            font-size: .7rem;
+            font-weight: 600;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: .2rem .6rem;
+            border-radius: 999px;
+            vertical-align: middle;
+            margin-left: .5rem;
+        }
+        .subtitle {
+            font-size: 1.05rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+        h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 2.2rem;
+            margin-bottom: .75rem;
+            color: var(--text);
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: .35rem;
+        }
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: .5rem;
+            color: #334155;
+        }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-bottom: 1rem; padding-left: 1.25rem; }
+        li { margin-bottom: .4rem; }
+
+        .callout {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout strong { color: var(--accent); }
+
+        .callout-warn {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout-warn strong { color: #b45309; }
+
+        .callout-success {
+            background: #d1fae5;
+            border-left: 4px solid #22c55e;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout-success strong { color: #047857; }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem 1.5rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+            font-size: .85rem;
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+            tab-size: 2;
+        }
+        pre .kw  { color: #c084fc; }
+        pre .op  { color: #f472b6; }
+        pre .cm  { color: #6b7280; font-style: italic; }
+        pre .str { color: #34d399; }
+        pre .num { color: #fbbf24; }
+        pre .fn  { color: #60a5fa; }
+        pre .var { color: #e2e8f0; }
+        pre .ty  { color: #22d3ee; }
+
+        code:not(pre code) {
+            background: #f1f5f9;
+            color: #1e293b;
+            padding: .15em .4em;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: .85em;
+        }
+
+        .step-visual {
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            font-size: .9rem;
+            overflow-x: auto;
+        }
+        .matrix-grid {
+            display: flex;
+            flex-direction: column;
+            gap: .25rem;
+            margin: .75rem 0;
+            align-items: flex-start;
+        }
+        .matrix-row {
+            display: flex;
+            gap: .25rem;
+            align-items: center;
+        }
+        .matrix-row .cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            padding: .3rem .55rem;
+            border-radius: 4px;
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            min-width: 2rem;
+            text-align: center;
+        }
+        .matrix-row .cell.lo { background: #dbeafe; border-color: #93c5fd; }
+        .matrix-row .cell.hi { background: #fef3c7; border-color: #fbbf24; }
+        .matrix-row .cell.mid { background: #d1fae5; border-color: #6ee7b7; color: #047857; font-weight: 700; }
+        .matrix-row .cell.found { background: #d1fae5; border-color: #22c55e; color: #047857; font-weight: 700; }
+        .matrix-row .cell.elim { opacity: .25; }
+        .matrix-row .rlabel {
+            font-size: .65rem;
+            color: #64748b;
+            font-family: 'JetBrains Mono', monospace;
+            min-width: 1.2rem;
+            text-align: right;
+            margin-right: .25rem;
+        }
+        .flat-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin: .5rem 0;
+            align-items: center;
+        }
+        .flat-row .cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            padding: .3rem .55rem;
+            border-radius: 4px;
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            min-width: 1.8rem;
+            text-align: center;
+        }
+        .flat-row .cell.lo { background: #dbeafe; border-color: #93c5fd; }
+        .flat-row .cell.hi { background: #fef3c7; border-color: #fbbf24; }
+        .flat-row .cell.mid { background: #d1fae5; border-color: #6ee7b7; color: #047857; font-weight: 700; }
+        .flat-row .cell.found { background: #d1fae5; border-color: #22c55e; color: #047857; font-weight: 700; }
+        .flat-row .cell.elim { opacity: .3; }
+        .flat-row .divider {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            padding: 0 .15rem;
+        }
+        .label {
+            font-size: .7rem;
+            color: #64748b;
+            margin-top: .15rem;
+        }
+
+        .decision-card {
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            background: #fafafa;
+        }
+        .decision-card h3 {
+            margin-top: 0;
+            font-size: .95rem;
+        }
+        .decision-card .tag {
+            display: inline-block;
+            font-size: .7rem;
+            font-weight: 600;
+            padding: .15rem .5rem;
+            border-radius: 999px;
+            margin-left: .5rem;
+            vertical-align: middle;
+        }
+        .tag-blue { background: #dbeafe; color: #1d4ed8; }
+        .tag-green { background: #d1fae5; color: #047857; }
+        .tag-amber { background: #fef3c7; color: #b45309; }
+        .tag-purple { background: #f3e8ff; color: #7c3aed; }
+
+        .pattern-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.25rem;
+            font-size: .85rem;
+        }
+        .pattern-table th, .pattern-table td {
+            padding: .6rem .7rem;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+        }
+        .pattern-table th { background: #f1f5f9; font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; }
+        .pattern-table tr:last-child td { border-bottom: none; }
+        .pattern-table .icon { font-size: 1rem; }
+
+        .flow-chart {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            margin-bottom: 1.25rem;
+        }
+        .flow-node {
+            display: flex;
+            align-items: flex-start;
+            gap: .75rem;
+            padding: .6rem .75rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #fafafa;
+        }
+        .flow-node .q {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 1.5rem;
+        }
+        .flow-node .ans {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            padding: .15rem .4rem;
+            border-radius: 4px;
+        }
+        .flow-node .go { background: #d1fae5; color: #047857; }
+        .flow-node .no { background: #fee2e2; color: #b91c1c; }
+
+        .quiz-box {
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            background: #fafafa;
+        }
+        .quiz-box h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+        .quiz-box details {
+            margin-top: .75rem;
+        }
+        .quiz-box summary {
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--accent);
+            padding: .3rem 0;
+        }
+        .quiz-box .answer {
+            padding: .75rem 1rem;
+            background: #f0fdf4;
+            border-left: 3px solid #22c55e;
+            border-radius: 0 6px 6px 0;
+            margin-top: .5rem;
+            font-size: .92rem;
+        }
+
+        .footer {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--line);
+            font-size: .9rem;
+            color: #64748b;
+            text-align: center;
+        }
+        .footer a { color: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>BS en 2D + Framework de Decision <span class="badge">w5d4</span></h1>
+    <p class="subtitle">
+        Como aplicar Binary Search cuando el input no es un array plano —
+        y como decidir cual de los 4 patrones de BS usar en cada problema.
+    </p>
+
+    <h2>1. Search a 2D Matrix — El Problema</h2>
+    <p>
+        <a href="https://leetcode.com/problems/search-a-2d-matrix/">LeetCode 74</a>:
+        Te dan una matriz <code>m x n</code> con dos propiedades:
+    </p>
+    <ul>
+        <li>Cada fila esta ordenada de <strong>menor a mayor</strong></li>
+        <li>El primer elemento de la fila <code>i+1</code> es <strong>mayor</strong> que el ultimo de la fila <code>i</code></li>
+    </ul>
+
+    <div class="callout">
+        <strong>Esto significa:</strong> si aplanas la matriz en un solo array de <code>m * n</code> elementos,
+        el resultado es un <strong>array ordenado</strong>. Y BS funciona en arrays ordenados.
+    </div>
+
+    <p>Ejemplo:</p>
+    <pre><code><span class="ty">matrix</span> = [
+  [<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>, <span class="num">7</span>],
+  [<span class="num">10</span>, <span class="num">11</span>, <span class="num">16</span>, <span class="num">20</span>],
+  [<span class="num">23</span>, <span class="num">30</span>, <span class="num">34</span>, <span class="num">60</span>]
+]
+<span class="fn">target</span> = <span class="num">3</span>  <span class="cm"># true</span>
+<span class="fn">target</span> = <span class="num">13</span> <span class="cm"># false</span></code></pre>
+
+    <div class="step-visual">
+        <strong>Visual: la matriz aplanda es un array ordenado</strong>
+        <div class="flat-row" style="margin-top:.5rem;">
+            <span class="cell">1</span><span class="cell">3</span><span class="cell">5</span><span class="cell">7</span>
+            <span class="divider">|</span>
+            <span class="cell">10</span><span class="cell">11</span><span class="cell">16</span><span class="cell">20</span>
+            <span class="divider">|</span>
+            <span class="cell">23</span><span class="cell">30</span><span class="cell">34</span><span class="cell">60</span>
+        </div>
+        <p style="font-size:.85rem; color:#64748b; margin:.25rem 0 0;">
+            fila 0 &rarr; fila 1 &rarr; fila 2 &rarr; todo ordenado
+        </p>
+    </div>
+
+    <h2>2. La Idea Clave: Mapeo 2D &harr; 1D</h2>
+
+    <p>En BS clasico, el indice <code>mid</code> apunta a una posicion en el array.
+    En una matriz, necesitamos convertir ese indice 1D a coordenadas 2D.</p>
+
+    <div class="callout-success">
+        <strong>Formula:</strong> <code>mid</code> en el array "aplanado" de tamaño <code>m * n</code>
+        se traduce a:
+        <br><br>
+        <code>row = mid / n</code> (cociente)<br>
+        <code>col = mid % n</code> (resto)
+    </div>
+
+    <p>Ejemplo con matriz 3 &times; 4:</p>
+    <div class="step-visual">
+        <div class="matrix-grid">
+            <div class="matrix-row">
+                <span class="rlabel">r0</span>
+                <span class="cell">1</span><span class="cell">3</span><span class="cell">5</span><span class="cell">7</span>
+                <span style="font-size:.75rem; color:#64748b; margin-left:.5rem;">indices 0..3</span>
+            </div>
+            <div class="matrix-row">
+                <span class="rlabel">r1</span>
+                <span class="cell">10</span><span class="cell">11</span><span class="cell">16</span><span class="cell">20</span>
+                <span style="font-size:.75rem; color:#64748b; margin-left:.5rem;">indices 4..7</span>
+            </div>
+            <div class="matrix-row">
+                <span class="rlabel">r2</span>
+                <span class="cell">23</span><span class="cell">30</span><span class="cell">34</span><span class="cell">60</span>
+                <span style="font-size:.75rem; color:#64748b; margin-left:.5rem;">indices 8..11</span>
+            </div>
+        </div>
+        <p style="margin-top:.5rem;">
+            Si <code>mid = 6</code>: <code>row = 6 / 4 = 1</code>, <code>col = 6 % 4 = 2</code>
+            &rarr; <code>matrix[1][2] = 16</code>
+        </p>
+        <p>Si <code>mid = 9</code>: <code>row = 9 / 4 = 2</code>, <code>col = 9 % 4 = 1</code>
+            &rarr; <code>matrix[2][1] = 30</code>
+        </p>
+    </div>
+
+    <h3>En Ruby:</h3>
+    <pre><code><span class="kw">def</span> <span class="fn">search_matrix</span>(matrix, target)
+  m = matrix.length
+  n = matrix[<span class="num">0</span>].length
+  left = <span class="num">0</span>
+  right = m * n - <span class="num">1</span>
+
+  <span class="kw">while</span> left &lt;= right
+    mid = left + (right - left) / <span class="num">2</span>
+    row = mid / n
+    col = mid % n
+    val = matrix[row][col]
+
+    <span class="kw">if</span> val == target
+      <span class="kw">return true</span>
+    <span class="kw">elsif</span> val &lt; target
+      left = mid + <span class="num">1</span>
+    <span class="kw">else</span>
+      right = mid - <span class="num">1</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  <span class="kw">false</span>
+<span class="kw">end</span></code></pre>
+
+    <div class="callout">
+        <strong>Nota:</strong> Es exactamente el mismo BS clasico que usas para
+        <code>nums = [1,3,5,7,10,11,16,20,23,30,34,60]</code>.
+        Lo unico nuevo es el mapeo de indices.
+    </div>
+
+    <h2>3. Visualizacion Paso a Paso</h2>
+
+    <p>Buscamos <code>target = 3</code> en la matriz de arriba (<code>m=3, n=4</code>):</p>
+
+    <div class="step-visual">
+        <strong>Iteracion 1:</strong> <code>left=0, right=11, mid=5</code>
+        <div class="matrix-grid">
+            <div class="matrix-row">
+                <span class="rlabel">r0</span>
+                <span class="cell lo">1</span><span class="cell">3</span><span class="cell">5</span><span class="cell">7</span>
+            </div>
+            <div class="matrix-row">
+                <span class="rlabel">r1</span>
+                <span class="cell mid">10</span><span class="cell elim" style="opacity:.3;">11</span><span class="cell elim" style="opacity:.3;">16</span><span class="cell elim" style="opacity:.3;">20</span>
+            </div>
+            <div class="matrix-row">
+                <span class="rlabel">r2</span>
+                <span class="cell elim" style="opacity:.3;">23</span><span class="cell elim" style="opacity:.3;">30</span><span class="cell elim" style="opacity:.3;">34</span><span class="cell hi" style="opacity:.3;">60</span>
+            </div>
+        </div>
+        <p><code>row=5/4=1, col=5%4=1, val=10.</code> <code>10 &gt; 3</code> &rarr; <strong>right = mid - 1 = 4</strong></p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Iteracion 2:</strong> <code>left=0, right=4, mid=2</code>
+        <div class="matrix-grid">
+            <div class="matrix-row">
+                <span class="rlabel">r0</span>
+                <span class="cell lo">1</span><span class="cell">3</span><span class="cell mid">5</span><span class="cell elim" style="opacity:.3;">7</span>
+            </div>
+            <div class="matrix-row">
+                <span class="rlabel">r1</span>
+                <span class="cell elim" style="opacity:.3;">10</span><span class="cell hi" style="opacity:.3;">11</span><span class="cell elim" style="opacity:.3;">16</span><span class="cell elim" style="opacity:.3;">20</span>
+            </div>
+        </div>
+        <p><code>row=2/4=0, col=2%4=2, val=5.</code> <code>5 &gt; 3</code> &rarr; <strong>right = mid - 1 = 1</strong></p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Iteracion 3:</strong> <code>left=0, right=1, mid=0</code>
+        <div class="matrix-grid">
+            <div class="matrix-row">
+                <span class="rlabel">r0</span>
+                <span class="cell lo">1</span><span class="cell hi">3</span><span class="cell elim" style="opacity:.3;">5</span><span class="cell elim" style="opacity:.3;">7</span>
+            </div>
+        </div>
+        <p><code>row=0/4=0, col=0%4=0, val=1.</code> <code>1 &lt; 3</code> &rarr; <strong>left = mid + 1 = 1</strong></p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Iteracion 4:</strong> <code>left=1, right=1, mid=1</code>
+        <div class="matrix-grid">
+            <div class="matrix-row">
+                <span class="rlabel">r0</span>
+                <span class="cell elim" style="opacity:.3;">1</span>
+                <span class="cell found">3</span>
+                <span class="cell elim" style="opacity:.3;">5</span><span class="cell elim" style="opacity:.3;">7</span>
+            </div>
+        </div>
+        <p><code>row=1/4=0, col=1%4=1, val=3.</code> <code>3 == target</code> &rarr; <strong>return true!</strong></p>
+    </div>
+
+    <h2>4. Framework: Los 4 Patrones de BS</h2>
+
+    <p>Hasta ahora has visto 4 formas distintas de aplicar BS. La clave es
+    reconocer cual usar segun el problema.</p>
+
+    <table class="pattern-table">
+        <tr>
+            <th>#</th>
+            <th>Patron</th>
+            <th>Input</th>
+            <th>Pregunta</th>
+            <th>mid se descarta?</th>
+            <th>Ejemplos</th>
+        </tr>
+        <tr>
+            <td><span class="icon">1</span></td>
+            <td><strong>Clasico</strong></td>
+            <td>Array ordenado</td>
+            <td><code>nums[mid] == target?</code></td>
+            <td>Si (ya se comparo)</td>
+            <td>LC 704, 35, 278</td>
+        </tr>
+        <tr>
+            <td><span class="icon">2</span></td>
+            <td><strong>En respuesta</strong></td>
+            <td>Rango de valores</td>
+            <td><code>feasible?(mid)?</code></td>
+            <td>No (podria ser el minimo factible)</td>
+            <td>LC 875, 1011, 69</td>
+        </tr>
+        <tr>
+            <td><span class="icon">3</span></td>
+            <td><strong>Rotado</strong></td>
+            <td>Array rotado ordenado</td>
+            <td><code>nums[mid] &lt; nums[0]?</code></td>
+            <td>Depende (buscar target o minimo)</td>
+            <td>LC 33, 153, 162</td>
+        </tr>
+        <tr>
+            <td><span class="icon">4</span></td>
+            <td><strong>2D</strong></td>
+            <td>Matriz m &times; n ordenada</td>
+            <td><code>matrix[mid/n][mid%n] == target?</code></td>
+            <td>Si (igual al clasico)</td>
+            <td>LC 74</td>
+        </tr>
+    </table>
+
+    <h2>5. Arbol de Decision: Que patron usar?</h2>
+
+    <div class="flow-chart">
+        <div class="flow-node">
+            <span class="q">?</span>
+            <span>El input esta <strong>ordenado</strong> o se puede ordenar?</span>
+            <span class="ans go">Si &rarr; considera BS</span>
+        </div>
+        <div class="flow-node">
+            <span class="q">1</span>
+            <span>Es un <strong>array plano</strong> ordenado?</span>
+            <span class="ans go">Si &rarr; BS clasico</span>
+        </div>
+        <div class="flow-node">
+            <span class="q">2</span>
+            <span>No hay array, pero la <strong>respuesta</strong> esta en un rango y <code>feasible?(x)</code> es monotona?</span>
+            <span class="ans go">Si &rarr; BS en respuesta</span>
+        </div>
+        <div class="flow-node">
+            <span class="q">3</span>
+            <span>Es un array ordenado pero <strong>rotado</strong> por un pivot?</span>
+            <span class="ans go">Si &rarr; BS rotado</span>
+        </div>
+        <div class="flow-node">
+            <span class="q">4</span>
+            <span>Es una <strong>matriz 2D</strong> donde filas y columnas estan ordenadas?</span>
+            <span class="ans go">Si &rarr; BS 2D (mapeo)</span>
+        </div>
+        <div class="flow-node">
+            <span class="q">X</span>
+            <span>No calza en ningun patron de BS?</span>
+            <span class="ans no">&rarr; Busca otro patron (hash, pointers, etc.)</span>
+        </div>
+    </div>
+
+    <div class="callout-warn">
+        <strong>Cuidado:</strong> Que un problema <em>pueda</em> resolverse con BS
+        no significa que <em>deba</em>. Ej: <strong>Find Peak Element</strong> (LC 162)
+        se resuelve con BS aunque el array no este ordenado &mdash;
+        porque la pendiente garantiza monotonicidad local.
+        <br><br>
+        La pregunta correcta no es "esta ordenado?" sino
+        <strong>"existe una propiedad monotona que divida el espacio en dos?"</strong>
+    </div>
+
+    <h2>6. Variante: Buscar en una Matriz donde Filas y Columnas Estan Ordenadas</h2>
+
+    <p>Existe una variante llamada <strong>Search a 2D Matrix II</strong> (LC 240)
+    donde cada fila <em>y</em> cada columna estan ordenadas individualmente,
+    pero NO hay relacion entre el final de una fila y el inicio de la siguiente:</p>
+
+    <pre><code><span class="cm"># Cada fila esta ordenada, cada columna esta ordenada</span>
+<span class="cm"># pero matrix[0][last] PUEDE ser > matrix[1][0]</span>
+<span class="ty">matrix</span> = [
+  [<span class="num">1</span>,  <span class="num">4</span>,  <span class="num">7</span>, <span class="num">11</span>],
+  [<span class="num">2</span>,  <span class="num">5</span>,  <span class="num">8</span>, <span class="num">12</span>],
+  [<span class="num">3</span>,  <span class="num">6</span>,  <span class="num">9</span>, <span class="num">16</span>]
+]</code></pre>
+
+    <p>Para esta variante, el mapeo 1D no funciona (no es un array plano ordenado).
+    Se usa una tecnica de <strong>eliminacion por esquina</strong>:
+    empezar en la esquina superior derecha y moverse izquierda/abajo.</p>
+
+    <div class="callout">
+        <strong>Moraleja:</strong> No toda matriz con datos ordenados es candidata a BS 2D.
+        Solo cuando la propiedad global de "todo esta ordenado" se cumple.
+    </div>
+
+    <h2>7. Ponte a Prueba</h2>
+
+    <div class="quiz-box">
+        <h3>Pregunta 1</h3>
+        <p>Matriz 3 &times; 5. Cual es el indice 1D de <code>matrix[2][3]</code>?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <code>2 * 5 + 3 = 10 + 3 = 13</code>
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 2</h3>
+        <p>En la misma matriz 3 &times; 5, si <code>mid = 7</code>,
+        a que coordenadas 2D corresponde?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <code>row = 7 / 5 = 1</code>, <code>col = 7 % 5 = 2</code>
+                &rarr; <code>matrix[1][2]</code>
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 3</h3>
+        <p>Tienes un array no ordenado y no rotado. Puedes usar BS?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <strong>No directamente.</strong> BS requiere una propiedad monotona
+                para descartar mitades. Si el array no esta ordenado ni tiene
+                una propiedad como la pendiente de Find Peak, no puedes aplicar BS.
+                Toca buscar con otro patron (hash, dos punteros, etc.).
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 4</h3>
+        <p>Que patron usarias para encontrar la raiz cuadrada de un numero entero?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <strong>BS en respuesta (patron 2).</strong>
+                No tienes un array, pero sabes que la respuesta esta entre
+                <code>0</code> y <code>x</code>, y <code>mid * mid &lt;= x</code>
+                es una funcion monotona. Este es LC 69.
+            </div>
+        </details>
+    </div>
+
+    <div class="quiz-box">
+        <h3>Pregunta 5</h3>
+        <p>Que patron usarias para una matriz 4 &times; 4 donde cada fila esta
+        ordenada pero <code>matrix[0][3]</code> puede ser mayor o menor que
+        <code>matrix[1][0]</code>?</p>
+        <details>
+            <summary>Ver respuesta</summary>
+            <div class="answer">
+                <strong>Ninguno de los 4 patrones de BS.</strong>
+                Esta matriz no esta "fully sorted" (no puedes aplanarla).
+                Necesitas la tecnica de esquina (LC 240) que no es BS puro,
+                sino eliminacion en O(m + n).
+            </div>
+        </details>
+    </div>
+
+    <h2>8. Resumen</h2>
+
+    <div class="callout-success">
+        <strong>BS en 2D:</strong> cuando la matriz es virtualmente un array ordenado
+        aplanado. Usa <code>row = mid / cols</code> y <code>col = mid % cols</code>.
+        El resto es BS clasico.
+    </div>
+
+    <div class="callout-success">
+        <strong>Framework de decision:</strong> preguntate si existe una propiedad
+        monotona que te permita descartar mitades. Si si, BS aplica.
+        Si no, busca otro patron.
+    </div>
+
+    <div class="footer">
+        <p>Duda? Preguntale al agente &mdash; para eso esta.</p>
+        <p>Referencia: <code>reference/0006-bs-2d-framework.html</code></p>
+        <p>Practice: <code>week-05/day-4/practice/01_search_2d_matrix.rb</code></p>
+    </div>
+
+</div>
+</body>
+</html>

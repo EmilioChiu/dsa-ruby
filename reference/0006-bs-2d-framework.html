@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ref 0006: BS en 2D + Framework de Decision</title>
+    <style>
+        :root {
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --line: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 1.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        }
+        @media print {
+            body { padding: 0.3in; background: white; }
+            .container { box-shadow: none; padding: 0; }
+            .card { break-inside: avoid; }
+        }
+        h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: .25rem;
+        }
+        .subtitle {
+            font-size: .85rem;
+            color: #64748b;
+            margin-bottom: 1.25rem;
+        }
+        h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.25rem;
+            margin-bottom: .5rem;
+            color: var(--accent);
+            border-bottom: 1px solid var(--accent-light);
+            padding-bottom: .2rem;
+        }
+        p { margin-bottom: .5rem; font-size: .88rem; }
+        ul { margin-bottom: .5rem; padding-left: 1.1rem; font-size: .85rem; }
+        li { margin-bottom: .2rem; }
+
+        .card {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: .7rem .9rem;
+            margin-bottom: .6rem;
+            background: #fafafa;
+        }
+        .card h3 {
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: .3rem;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: .7rem .9rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: .78rem;
+            line-height: 1.5;
+            margin-bottom: .7rem;
+        }
+        pre .kw  { color: #c084fc; }
+        pre .num { color: #fbbf24; }
+        pre .fn  { color: #60a5fa; }
+        pre .cm  { color: #6b7280; font-style: italic; }
+        pre .ty  { color: #22d3ee; }
+
+        code:not(pre code) {
+            background: #f1f5f9;
+            padding: .1em .3em;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .82em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: .7rem;
+            font-size: .8rem;
+        }
+        th, td {
+            padding: .35rem .5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+        }
+        th { background: #f1f5f9; font-weight: 600; font-size: .75rem; }
+
+        .tag { display: inline-block; font-size: .65rem; font-weight: 600; padding: .1rem .4rem; border-radius: 999px; }
+        .tag-blue { background: #dbeafe; color: #1d4ed8; }
+        .tag-green { background: #d1fae5; color: #047857; }
+        .tag-amber { background: #fef3c7; color: #b45309; }
+        .tag-purple { background: #f3e8ff; color: #7c3aed; }
+
+        .callout {
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+            padding: .5rem .75rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: .6rem;
+            font-size: .82rem;
+        }
+
+        .footer {
+            margin-top: 1.25rem;
+            padding-top: .75rem;
+            border-top: 1px solid var(--line);
+            font-size: .78rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>BS en 2D + Framework de Decision</h1>
+    <p class="subtitle">Cheatsheet imprimible &mdash; w5d4</p>
+
+    <h2>Mapeo 2D &harr; 1D</h2>
+    <p>Para una matriz <code>m x n</code> que se puede aplanar en un array ordenado:</p>
+    <pre><code>row = mid / n
+col = mid % n
+val = matrix[row][col]</code></pre>
+
+    <h2>BS Clasico en 2D (LC 74)</h2>
+    <pre><code><span class="kw">def</span> <span class="fn">search_matrix</span>(matrix, target)
+  m = matrix.length
+  n = matrix[<span class="num">0</span>].length
+  left = <span class="num">0</span>
+  right = m * n - <span class="num">1</span>
+
+  <span class="kw">while</span> left &lt;= right
+    mid = left + (right - left) / <span class="num">2</span>
+    val = matrix[mid / n][mid % n]
+
+    <span class="kw">if</span> val == target
+      <span class="kw">return true</span>
+    <span class="kw">elsif</span> val &lt; target
+      left = mid + <span class="num">1</span>
+    <span class="kw">else</span>
+      right = mid - <span class="num">1</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+  <span class="kw">false</span>
+<span class="kw">end</span></code></pre>
+
+    <div class="callout">
+        <strong>Requisito:</strong> La matriz debe estar "fully sorted" — cada fila ordenada
+        Y primer elemento de fila i+1 > ultimo de fila i. Si no, no puedes aplanarla.
+    </div>
+
+    <h2>Los 4 Patrones de BS</h2>
+
+    <table>
+        <tr>
+            <th>Patron</th>
+            <th>Señal</th>
+            <th>mid se descarta?</th>
+            <th>Problemas</th>
+        </tr>
+        <tr>
+            <td><strong>Clasico</strong> <span class="tag tag-blue">1</span></td>
+            <td>Array ordenado, target exacto</td>
+            <td>Si (ya se comparo)</td>
+            <td>LC 704, 35, 278</td>
+        </tr>
+        <tr>
+            <td><strong>En respuesta</strong> <span class="tag tag-green">2</span></td>
+            <td>Rango de valores, <code>feasible?</code> monotona</td>
+            <td>No (podria ser el minimo factible)</td>
+            <td>LC 875, 1011, 69</td>
+        </tr>
+        <tr>
+            <td><strong>Rotado</strong> <span class="tag tag-amber">3</span></td>
+            <td>Array ordenado + pivot</td>
+            <td>Depende</td>
+            <td>LC 33, 153, 162</td>
+        </tr>
+        <tr>
+            <td><strong>2D</strong> <span class="tag tag-purple">4</span></td>
+            <td>Matriz m&times;n fully sorted</td>
+            <td>Si (igual al clasico)</td>
+            <td>LC 74</td>
+        </tr>
+    </table>
+
+    <h2>Arbol de Decision Rapido</h2>
+
+    <div class="card">
+        <h3>1. Array plano ordenado &rarr; BS clasico</h3>
+        <p><code>target</code> conocido, buscas existencia.</p>
+    </div>
+    <div class="card">
+        <h3>2. Sin array, rango de valores &rarr; BS en respuesta</h3>
+        <p>Pregunta: "cual es el minimo X tal que Y?"</p>
+    </div>
+    <div class="card">
+        <h3>3. Array ordenado pero rotado &rarr; BS rotado</h3>
+        <p>Buscar pivot o target en array con quiebre.</p>
+    </div>
+    <div class="card">
+        <h3>4. Matriz m&times;n fully sorted &rarr; BS 2D</h3>
+        <p>Aplana virtualmente con <code>row = mid / n</code>.</p>
+    </div>
+    <div class="card" style="background:#fef3c7; border-color:#f59e0b;">
+        <h3>X. Ninguna monotonia clara &rarr; No es BS</h3>
+        <p>Busca otro patron: hash, pointers, sliding window, etc.</p>
+    </div>
+
+    <h2>Off-by-One: Recordatorio</h2>
+    <ul>
+        <li><code>mid</code> <strong>podria ser</strong> la respuesta? &rarr; <code>right = mid</code> (o <code>left = mid</code> con ceiling)</li>
+        <li><code>mid</code> <strong>NO puede ser</strong> la respuesta? &rarr; <code>mid +/- 1</code></li>
+        <li><code>left = mid</code> necesita <code>ceiling: (left + right + 1) / 2</code></li>
+        <li><code>right = mid</code> es siempre seguro</li>
+    </ul>
+
+    <div class="footer">
+        <p>Leccion: <code>lessons/0014-bs-2d-matrix.html</code> | Practica: <code>week-05/day-4/practice/01_search_2d_matrix.rb</code></p>
+        <p>Recurso: <a href="https://visualgo.net/en/list">VisuAlgo</a> — visualizacion de BS</p>
+    </div>
+
+</div>
+</body>
+</html>
