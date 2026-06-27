@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warmup 0015: BS Loop Invariants — Practica</title>
+    <style>
+        :root {
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --line: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+        }
+        @media (min-width: 640px) {
+            body { padding: 3rem 1.5rem; }
+            .container { padding: 3rem 2.5rem; }
+        }
+        @media print {
+            body { padding: 0.5in; background: white; }
+            .container { box-shadow: none; padding: 0; }
+            .quiz-box { break-inside: avoid; }
+        }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            color: var(--text);
+            margin-bottom: .5rem;
+        }
+        h1 .badge {
+            display: inline-block;
+            font-size: .7rem;
+            font-weight: 600;
+            background: #fef3c7;
+            color: #b45309;
+            padding: .2rem .6rem;
+            border-radius: 999px;
+            vertical-align: middle;
+            margin-left: .5rem;
+        }
+        .subtitle {
+            font-size: 1.05rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .warmup-banner {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: .75rem 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+            font-size: .9rem;
+        }
+        .warmup-banner strong { color: #b45309; }
+        h2 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: .75rem;
+            color: var(--text);
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: .35rem;
+        }
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.2rem;
+            margin-bottom: .5rem;
+            color: #334155;
+        }
+        p { margin-bottom: .9rem; }
+        ul, ol { margin-bottom: .9rem; padding-left: 1.25rem; }
+        li { margin-bottom: .35rem; }
+
+        .callout {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout strong { color: var(--accent); }
+        .callout-success {
+            background: #d1fae5;
+            border-left: 4px solid #22c55e;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout-success strong { color: #047857; }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem 1.5rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+            font-size: .85rem;
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+            tab-size: 2;
+        }
+        pre .kw  { color: #c084fc; }
+        pre .op  { color: #f472b6; }
+        pre .cm  { color: #6b7280; font-style: italic; }
+        pre .str { color: #34d399; }
+        pre .num { color: #fbbf24; }
+        pre .fn  { color: #60a5fa; }
+        pre .ty  { color: #22d3ee; }
+
+        code:not(pre code) {
+            background: #f1f5f9;
+            color: #1e293b;
+            padding: .15em .4em;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: .85em;
+        }
+
+        .ref-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .ref-card h3 { margin-top: 0; font-size: .95rem; }
+        .ref-card table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .85rem;
+            margin-top: .5rem;
+        }
+        .ref-card th, .ref-card td {
+            padding: .5rem .6rem;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+        }
+        .ref-card th { background: #f1f5f9; font-weight: 600; font-size: .78rem; text-transform: uppercase; letter-spacing: .03em; }
+        .ref-card tr:last-child td { border-bottom: none; }
+
+        .quiz-box {
+            background: #fafafa;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        .quiz-box .q-num {
+            display: inline-block;
+            font-size: .7rem;
+            font-weight: 700;
+            color: white;
+            background: var(--accent);
+            padding: .15rem .5rem;
+            border-radius: 999px;
+            margin-bottom: .5rem;
+        }
+        .quiz-box h3 {
+            margin-top: 0;
+            font-size: .95rem;
+        }
+        .quiz-box .scenario {
+            background: var(--accent-light);
+            padding: .75rem 1rem;
+            border-radius: 6px;
+            font-size: .9rem;
+            margin-bottom: 1rem;
+        }
+        .quiz-box .options {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            margin-bottom: 1rem;
+        }
+        .quiz-box .option {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .5rem .75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: .88rem;
+            transition: all .15s;
+        }
+        .quiz-box .option:hover { border-color: var(--accent); background: var(--accent-light); }
+        .quiz-box .option input[type="radio"] { accent-color: var(--accent); }
+        .quiz-box .option.correct { border-color: #22c55e; background: #d1fae5; }
+        .quiz-box .option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-box .feedback {
+            display: none;
+            padding: .75rem 1rem;
+            border-radius: 6px;
+            margin-top: .5rem;
+            font-size: .9rem;
+        }
+        .quiz-box .feedback.show { display: block; }
+        .quiz-box .feedback.correct { background: #d1fae5; border-left: 3px solid #22c55e; }
+        .quiz-box .feedback.wrong { background: #fee2e2; border-left: 3px solid #ef4444; }
+        .quiz-box button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: .5rem 1.25rem;
+            border-radius: 6px;
+            font-size: .85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background .15s;
+            margin-top: .5rem;
+        }
+        .quiz-box button:hover { background: #1d4ed8; }
+        .quiz-box button:disabled { background: #94a3b8; cursor: default; }
+
+        .footer {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--line);
+            font-size: .9rem;
+            color: #64748b;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>Warmup: BS Loop Invariants <span class="badge">debt-002</span></h1>
+    <p class="subtitle">
+        Practica eligiendo entre <code>left &lt; right</code> vs <code>left &lt;= right</code>,
+        y cuando usar <code>mid</code>, <code>mid - 1</code>, <code>mid + 1</code>.
+    </p>
+
+    <div class="warmup-banner">
+        <strong>Deuda conceptual debt-002:</strong> Confusion entre
+        <code>left &lt; right</code> vs <code>left &lt;= right</code>,
+        y como afecta el manejo de boundaries. Resuelve los 8 escenarios
+        para cerrar esta deuda.
+    </div>
+
+    <h2>Referencia Rapida</h2>
+
+    <div class="ref-card">
+        <h3>Los 4 Movimientos de BS</h3>
+        <table>
+            <tr><th>Movimiento</th><th>Significa</th><th>Condicion</th></tr>
+            <tr>
+                <td><code>left = mid + 1</code></td>
+                <td>mid y todo a la izq no pueden ser respuesta</td>
+                <td>Sabes que mid no es valido</td>
+            </tr>
+            <tr>
+                <td><code>right = mid - 1</code></td>
+                <td>mid y todo a la der no pueden ser respuesta</td>
+                <td>Sabes que mid no es valido</td>
+            </tr>
+            <tr>
+                <td><code>left = mid</code></td>
+                <td>mid podria ser la respuesta (conservalo)</td>
+                <td>No puedes descartar mid</td>
+            </tr>
+            <tr>
+                <td><code>right = mid</code></td>
+                <td>mid podria ser la respuesta (conservalo)</td>
+                <td>No puedes descartar mid</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="ref-card">
+        <h3>Cuando usar cual while?</h3>
+        <table>
+            <tr><th>Condicion</th><th>Rango</th><th>Movimiento seguro</th><th>Ejemplo tipico</th></tr>
+            <tr>
+                <td><code>while left &lt;= right</code></td>
+                <td><code>[left, right]</code> con 1 elemento</td>
+                <td><code>left = mid + 1</code>, <code>right = mid - 1</code></td>
+                <td>BS clasico (LC 704)</td>
+            </tr>
+            <tr>
+                <td><code>while left &lt; right</code></td>
+                <td><code>[left, right)</code> — rango exclusivo</td>
+                <td><code>left = mid + 1</code>, <code>right = mid</code></td>
+                <td>BS en respuesta (LC 875)</td>
+            </tr>
+        </table>
+    </div>
+
+    <h2>Escenarios de Practica</h2>
+    <p>Para cada escenario, selecciona la opcion correcta y haz clic en "Verificar".</p>
+
+    <div class="quiz-box" id="q1">
+        <span class="q-num">Escenario 1</span>
+        <h3>BS clasico: buscar target en array ordenado</h3>
+        <div class="scenario">
+            <code>nums = [1, 3, 5, 7, 9, 11, 13]</code>, <code>target = 7</code><br>
+            Tienes <code>while left &lt;= right</code>. En la primera iteracion,
+            <code>left=0, right=6, mid=3</code>.
+            <code>nums[3] = 7 == target</code>.
+        </div>
+        <p><strong>Que haces?</strong></p>
+        <div class="options" data-correct="2">
+            <label class="option"><input type="radio" name="q1" value="0"> <code>return mid - 1</code></label>
+            <label class="option"><input type="radio" name="q1" value="1"> <code>right = mid - 1; continue</code></label>
+            <label class="option"><input type="radio" name="q1" value="2"> <code>return mid</code></label>
+            <label class="option"><input type="radio" name="q1" value="3"> <code>left = mid + 1; continue</code></label>
+        </div>
+        <button onclick="checkAnswer('q1')">Verificar</button>
+        <div class="feedback" id="fb-q1"></div>
+    </div>
+
+    <div class="quiz-box" id="q2">
+        <span class="q-num">Escenario 2</span>
+        <h3>BS clasico: target no esta, descartar mitad</h3>
+        <div class="scenario">
+            <code>nums = [1, 3, 5, 7, 9, 11, 13]</code>, <code>target = 13</code><br>
+            <code>while left &lt;= right</code>, <code>left=0, right=6, mid=3</code>.
+            <code>nums[3] = 7 &lt; 13</code> (target).
+        </div>
+        <p><strong>Que haces?</strong></p>
+        <div class="options" data-correct="2">
+            <label class="option"><input type="radio" name="q2" value="0"> <code>right = mid - 1</code> (descartas mitad derecha)</label>
+            <label class="option"><input type="radio" name="q2" value="1"> <code>right = mid</code> (conservas mid)</label>
+            <label class="option"><input type="radio" name="q2" value="2"> <code>left = mid + 1</code> (descartas mitad izquierda)</label>
+            <label class="option"><input type="radio" name="q2" value="3"> <code>left = mid</code> (conservas mid)</label>
+        </div>
+        <button onclick="checkAnswer('q2')">Verificar</button>
+        <div class="feedback" id="fb-q2"></div>
+    </div>
+
+    <div class="quiz-box" id="q3">
+        <span class="q-num">Escenario 3</span>
+        <h3>BS en respuesta: Koko Eating Bananas</h3>
+        <div class="scenario">
+            Quieres encontrar la <strong>minima</strong> velocidad <code>k</code>
+            tal que <code>can_eat(k)</code> es true.
+            Usas <code>while left &lt; right</code>.
+            <code>mid</code> evalua como <code>can_eat(mid) = true</code>.
+        </div>
+        <p><strong>Que haces?</strong> (mid podria ser la respuesta minima)</p>
+        <div class="options" data-correct="0">
+            <label class="option"><input type="radio" name="q3" value="0"> <code>right = mid</code> (conservas mid como candidato)</label>
+            <label class="option"><input type="radio" name="q3" value="1"> <code>right = mid - 1</code> (descartas mid)</label>
+            <label class="option"><input type="radio" name="q3" value="2"> <code>left = mid + 1</code> (buscas mas arriba)</label>
+            <label class="option"><input type="radio" name="q3" value="3"> <code>return mid</code> (es la respuesta segura)</label>
+        </div>
+        <button onclick="checkAnswer('q3')">Verificar</button>
+        <div class="feedback" id="fb-q3"></div>
+    </div>
+
+    <div class="quiz-box" id="q4">
+        <span class="q-num">Escenario 4</span>
+        <h3>BS clasico: que while usar?</h3>
+        <div class="scenario">
+            Buscas el indice donde insertar <code>target</code> en un array ordenado
+            (LC 35). Si no existe, quieres el indice donde deberia estar.
+            El array puede estar vacio.
+        </div>
+        <p><strong>Que while loop es mas apropiado?</strong></p>
+        <div class="options" data-correct="0">
+            <label class="option"><input type="radio" name="q4" value="0"> <code>while left &lt;= right</code> con <code>return left</code> al salir</label>
+            <label class="option"><input type="radio" name="q4" value="1"> <code>while left &lt; right</code> con <code>return left</code> al salir</label>
+            <label class="option"><input type="radio" name="q4" value="2"> <code>while left &lt; right</code> con <code>return -1</code> al salir</label>
+            <label class="option"><input type="radio" name="q4" value="3"> <code>while true</code> con break manual</label>
+        </div>
+        <button onclick="checkAnswer('q4')">Verificar</button>
+        <div class="feedback" id="fb-q4"></div>
+    </div>
+
+    <div class="quiz-box" id="q5">
+        <span class="q-num">Escenario 5</span>
+        <h3>BS en respuesta: Ship Packages</h3>
+        <div class="scenario">
+            LC 1011. Buscas la <strong>minima</strong> capacidad <code>c</code>
+            tal que <code>can_ship(c) = true</code>.
+            <code>while left &lt; right</code>.
+            <code>can_ship(mid) = false</code> (muy poco, no alcanza).
+        </div>
+        <p><strong>Que haces?</strong> (mid no es suficiente)</p>
+        <div class="options" data-correct="1">
+            <label class="option"><input type="radio" name="q5" value="0"> <code>right = mid</code></label>
+            <label class="option"><input type="radio" name="q5" value="1"> <code>left = mid + 1</code></label>
+            <label class="option"><input type="radio" name="q5" value="2"> <code>right = mid - 1</code></label>
+            <label class="option"><input type="radio" name="q5" value="3"> <code>left = mid</code></label>
+        </div>
+        <button onclick="checkAnswer('q5')">Verificar</button>
+        <div class="feedback" id="fb-q5"></div>
+    </div>
+
+    <div class="quiz-box" id="q6">
+        <span class="q-num">Escenario 6</span>
+        <h3>Cuidado: loop infinito!</h3>
+        <div class="scenario">
+            Tienes <code>while left &lt; right</code>,
+            <code>left = 3, right = 4, mid = (3 + 4) / 2 = 3</code>.
+            Evaluas y decides <code>left = mid</code> (conservas mid).
+        </div>
+        <p><strong>Que pasa?</strong></p>
+        <div class="options" data-correct="3">
+            <label class="option"><input type="radio" name="q6" value="0"> Funciona correctamente, avanza</label>
+            <label class="option"><input type="radio" name="q6" value="1"> Se sale del loop inmediatamente</label>
+            <label class="option"><input type="radio" name="q6" value="2"> Da error de indice fuera de rango</label>
+            <label class="option"><input type="radio" name="q6" value="3"> <strong>Loop infinito!</strong> left=3, right=4 siempre</label>
+        </div>
+        <button onclick="checkAnswer('q6')">Verificar</button>
+        <div class="feedback" id="fb-q6"></div>
+    </div>
+
+    <div class="quiz-box" id="q7">
+        <span class="q-num">Escenario 7</span>
+        <h3>Solucion al loop infinito</h3>
+        <div class="scenario">
+            En el escenario 6, tenias loop infinito con <code>while left &lt; right</code>
+            y <code>left = mid</code>. Como lo arreglas?
+        </div>
+        <div class="options" data-correct="2">
+            <label class="option"><input type="radio" name="q7" value="0"> Cambiar a <code>while left &lt;= right</code></label>
+            <label class="option"><input type="radio" name="q7" value="1"> Cambiar a <code>mid = (left + right) / 2</code> (floor)</label>
+            <label class="option"><input type="radio" name="q7" value="2"> Usar <code>mid = (left + right + 1) / 2</code> (ceil)</label>
+            <label class="option"><input type="radio" name="q7" value="3"> Cambiar a <code>left = mid - 1</code></label>
+        </div>
+        <button onclick="checkAnswer('q7')">Verificar</button>
+        <div class="feedback" id="fb-q7"></div>
+    </div>
+
+    <div class="quiz-box" id="q8">
+        <span class="q-num">Escenario 8</span>
+        <h3>First Bad Version (LC 278)</h3>
+        <div class="scenario">
+            Buscas la <strong>primera</strong> version mala.
+            <code>is_bad_version(mid) = true</code> (es mala).
+            <code>while left &lt; right</code>.
+        </div>
+        <p><strong>Que haces?</strong> (mid podria ser la primera mala)</p>
+        <div class="options" data-correct="0">
+            <label class="option"><input type="radio" name="q8" value="0"> <code>right = mid</code></label>
+            <label class="option"><input type="radio" name="q8" value="1"> <code>right = mid - 1</code></label>
+            <label class="option"><input type="radio" name="q8" value="2"> <code>left = mid + 1</code></label>
+            <label class="option"><input type="radio" name="q8" value="3"> <code>return mid</code></label>
+        </div>
+        <button onclick="checkAnswer('q8')">Verificar</button>
+        <div class="feedback" id="fb-q8"></div>
+    </div>
+
+    <h2>Resumen: Arbol de Decision</h2>
+
+    <div class="callout-success">
+        <strong>Regla de oro:</strong><br>
+        <strong>left &lt;= right</strong> &rarr; siempre puedes mover <code>mid +/- 1</code> (ya lo descartaste).<br>
+        <strong>left &lt; right</strong> &rarr; si conservas mid (<code>= mid</code>), usa <code>mid = ceil()</code> (mid superior) para evitar loop infinito.
+    </div>
+
+    <div class="callout">
+        <strong>Tip:</strong> Si no estas seguro, preguntate:<br>
+        "Puedo probar que <code>mid</code> <strong>NO</strong> es la respuesta?"<br>
+        Si si &rarr; <code>mid +/- 1</code> (descartalo).<br>
+        Si no &rarr; <code>= mid</code> (conservalo como candidato).
+    </div>
+
+    <div class="footer">
+        <p>Recurso: <code>reference/0005-bs-rotated-array-cheatsheet.html</code></p>
+        <p>Leccion previa: <code>lessons/0013-binary-search-off-by-one.html</code></p>
+        <p>Duda? Preguntale al agente &mdash; para eso esta.</p>
+    </div>
+
+</div>
+
+<script>
+function checkAnswer(quizId) {
+    const quiz = document.getElementById(quizId);
+    const options = quiz.querySelector('.options');
+    const correctVal = options.dataset.correct;
+    const selected = quiz.querySelector('input[type="radio"]:checked');
+    const feedback = document.getElementById('fb-' + quizId);
+    const button = quiz.querySelector('button');
+
+    if (!selected) {
+        feedback.className = 'feedback show wrong';
+        feedback.textContent = 'Selecciona una opcion primero.';
+        return;
+    }
+
+    const labels = quiz.querySelectorAll('.option');
+    labels.forEach(l => l.classList.remove('correct', 'wrong'));
+
+    const isCorrect = selected.value === correctVal;
+    const parentLabel = selected.closest('.option');
+
+    if (isCorrect) {
+        parentLabel.classList.add('correct');
+        feedback.className = 'feedback show correct';
+        feedback.innerHTML = 'Correcto! ' + getExplanation(quizId);
+    } else {
+        parentLabel.classList.add('wrong');
+        labels.forEach(l => {
+            if (l.querySelector('input').value === correctVal) {
+                l.classList.add('correct');
+            }
+        });
+        feedback.className = 'feedback show wrong';
+        feedback.innerHTML = 'Incorrecto. ' + getExplanation(quizId);
+    }
+    button.disabled = true;
+    quiz.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+}
+
+function getExplanation(id) {
+    const explanations = {
+        'q1': 'En BS clasico, si nums[mid] == target, devuelves mid. No sigues buscando.',
+        'q2': 'nums[mid] < target significa que el target esta a la derecha. Descartas mid y la mitad izquierda con left = mid + 1.',
+        'q3': 'En BS en respuesta con while left < right, si can_eat(mid) = true, conservas mid porque PODRIA ser la minima respuesta. right = mid.',
+        'q4': 'LC 35: while left <= right. Al salir, left es el indice de insercion. Esto funciona incluso con array vacio.',
+        'q5': 'can_ship(mid) = false significa que mid no es suficiente. Lo descartas con left = mid + 1.',
+        'q6': 'Con left=3, right=4, mid=3 (floor), left=mid=3. Nunca avanzas. Loop infinito!',
+        'q7': 'Cuando haces left = mid, usa mid = (left + right + 1) / 2 (ceil). Asi left siempre avanza al menos 1.',
+        'q8': 'is_bad_version(mid) = true. mid PODRIA ser la primera mala. No la descartes. right = mid para conservarla.',
+    };
+    return explanations[id] || '';
+}
+</script>
+
+</body>
+</html>

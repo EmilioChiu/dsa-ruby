@@ -47,3 +47,24 @@
 - **Practica**: LC 74 (Search a 2D Matrix) resuelto. Todos los tests pasaron.
 - **Aprendizaje clave**: El mapeo 2D a 1D convierte cualquier matriz fully sorted en un array plano. La pregunta correcta no es "esta ordenado?" sino "existe una propiedad monotona?".
 - **Estado**: w5d4 completado. Proximo: w5d5 (Milestone 5 — examen integrador de BS).
+
+## Convencion de Codigo
+- Usar SIEMPRE nombres completos y descriptivos para variables en ejercicios y lecciones.
+- Evitar abreviaciones como `lo`, `hi`, `i`, `j`, `idx`.
+- Preferir: `left`, `right`, `boundary`, `current`, `left_index`, `right_index`, `pivot_value`, etc.
+- Si el nombre choca con algun metodo interno de Ruby, buscar sinonimo descriptivo en vez de abreviar.
+
+## Preferencia Futura
+- **Proxima sesion (w6d2):** Antes de empezar, hacer un quiz verbal en el chat donde el usuario deba diferenciar Merge Sort vs Quick Sort (cual usar segun el escenario). Esto como warmup de refuerzo.
+
+## Sesion 2026-06-26 — Sorting Algorithms (w6d1) COMPLETADO
+- **Warmup**: Leccion 0015 (BS loop invariants warmup). 8 escenarios practicados. Debt-002 resuelta.
+- **Logro**: Leccion 0016 (Merge Sort + Quick Sort). Visualizacion paso a paso, implementacion en Ruby, tabla comparativa.
+- **Reference**: 0007-sorting-cheatsheet.html creado.
+- **Practica**: Archivos 01_merge_sort.rb, 02_quick_sort.rb, 03_sort_an_array.rb preparados.
+- **Aprendizajes clave**:
+  - Merge Sort: siempre O(n log n), O(n) espacio, estable. `merge()` crea array auxiliar.
+  - Quick Sort: O(n log n) promedio, O(n^2) peor caso (array ordenado + pivot ultimo). In-place con swaps.
+  - Lomuto vs Hoare: Lomuto es mas simple para entrevistas; Hoare es mas eficiente.
+  - Para evitar loop infinito en `while left < right` con `left = mid`, usar `mid = ceil()` (mid superior).
+- **Estado**: w6d1 completado. Proximo: w6d2 (Custom Sort Patterns).

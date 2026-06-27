@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ref 0007: Sorting Cheatsheet — Merge Sort & Quick Sort</title>
+    <style>
+        :root {
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --line: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 1.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+        @media print { body { padding: 0.3in; background: white; } .container { box-shadow: none; padding: 0; } .card { break-inside: avoid; } }
+        h1 { font-size: 1.3rem; font-weight: 700; margin-bottom: .25rem; }
+        .subtitle { font-size: .85rem; color: #64748b; margin-bottom: 1.25rem; }
+        h2 { font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: .6rem; color: var(--text); border-bottom: 1.5px solid var(--accent-light); padding-bottom: .25rem; }
+        h3 { font-size: .9rem; font-weight: 600; margin-top: 1rem; margin-bottom: .4rem; color: #334155; }
+        p { margin-bottom: .6rem; font-size: .88rem; }
+        ul, ol { margin-bottom: .6rem; padding-left: 1.1rem; font-size: .88rem; }
+        li { margin-bottom: .25rem; }
+
+        pre {
+            background: var(--code-bg); color: var(--code-text); padding: .8rem 1rem;
+            border-radius: 8px; overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: .78rem; line-height: 1.55; margin-bottom: 1rem; tab-size: 2;
+        }
+        pre .kw { color: #c084fc; } pre .op { color: #f472b6; } pre .fn { color: #60a5fa; }
+        pre .num { color: #fbbf24; } pre .ty { color: #22d3ee; }
+        code:not(pre code) { background: #f1f5f9; padding: .15em .35em; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: .82em; }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: .82rem; }
+        th, td { padding: .5rem .6rem; text-align: left; border-bottom: 1px solid var(--line); }
+        th { background: #f1f5f9; font-weight: 600; font-size: .75rem; text-transform: uppercase; letter-spacing: .03em; }
+
+        .card { background: #fafafa; border: 1px solid #e2e8f0; border-radius: 8px; padding: .8rem 1rem; margin-bottom: 1rem; }
+        .card h3 { margin-top: 0; font-size: .85rem; }
+        .two-col { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .two-col > * { flex: 1; min-width: 280px; }
+        .callout { background: var(--accent-light); border-left: 3px solid var(--accent); padding: .6rem .8rem; border-radius: 0 6px 6px 0; margin-bottom: 1rem; font-size: .82rem; }
+        .callout strong { color: var(--accent); }
+
+        .footer { margin-top: 1.5rem; padding-top: .8rem; border-top: 1px solid var(--line); font-size: .78rem; color: #64748b; text-align: center; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>Sorting Cheatsheet</h1>
+    <p class="subtitle">Merge Sort vs Quick Sort — implementacion, complejidad, decision</p>
+
+    <div class="two-col">
+        <div class="card">
+            <h3>Merge Sort</h3>
+            <pre><code><span class="kw">def</span> <span class="fn">merge_sort</span>(arr)
+  <span class="kw">return</span> arr <span class="kw">if</span> arr.length <span class="op">&lt;=</span> <span class="num">1</span>
+  mid <span class="op">=</span> arr.length <span class="op">/</span> <span class="num">2</span>
+  left_half  <span class="op">=</span> <span class="fn">merge_sort</span>(arr[<span class="num">0</span><span class="op">...</span>mid])
+  right_half <span class="op">=</span> <span class="fn">merge_sort</span>(arr[mid<span class="op">..</span>])
+  <span class="fn">merge</span>(left_half, right_half)
+<span class="kw">end</span>
+
+<span class="kw">def</span> <span class="fn">merge</span>(left_half, right_half)
+  result <span class="op">=</span> []
+  left_index <span class="op">=</span> <span class="num">0</span>; right_index <span class="op">=</span> <span class="num">0</span>
+  <span class="kw">while</span> left_index <span class="op">&lt;</span> left_half.length <span class="op">&amp;&amp;</span> right_index <span class="op">&lt;</span> right_half.length
+    <span class="kw">if</span> left_half[left_index] <span class="op">&lt;=</span> right_half[right_index]
+      result <span class="op">&lt;&lt;</span> left_half[left_index]; left_index <span class="op">+=</span> <span class="num">1</span>
+    <span class="kw">else</span>
+      result <span class="op">&lt;&lt;</span> right_half[right_index]; right_index <span class="op">+=</span> <span class="num">1</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+  result <span class="op">+=</span> left_half[left_index<span class="op">..</span>] <span class="op">+</span> right_half[right_index<span class="op">..</span>]
+  result
+<span class="kw">end</span></code></pre>
+        </div>
+
+        <div class="card">
+            <h3>Quick Sort (Lomuto)</h3>
+            <pre><code><span class="kw">def</span> <span class="fn">quick_sort</span>(arr, left <span class="op">=</span> <span class="num">0</span>,
+               right <span class="op">=</span> arr.length <span class="op">-</span> <span class="num">1</span>)
+  <span class="kw">return</span> arr <span class="kw">if</span> left <span class="op">&gt;=</span> right
+  pivot_index <span class="op">=</span> <span class="fn">partition</span>(arr, left, right)
+  <span class="fn">quick_sort</span>(arr, left, pivot_index <span class="op">-</span> <span class="num">1</span>)
+  <span class="fn">quick_sort</span>(arr, pivot_index <span class="op">+</span> <span class="num">1</span>, right)
+  arr
+<span class="kw">end</span>
+
+<span class="kw">def</span> <span class="fn">partition</span>(arr, left, right)
+  pivot_value <span class="op">=</span> arr[right]
+  boundary <span class="op">=</span> left
+  (left<span class="op">...</span>right).<span class="kw">each</span> <span class="kw">do</span> <span class="op">|</span>current<span class="op">|</span>
+    <span class="kw">if</span> arr[current] <span class="op">&lt;=</span> pivot_value
+      arr[boundary], arr[current] <span class="op">=</span> arr[current], arr[boundary]
+      boundary <span class="op">+=</span> <span class="num">1</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+  arr[boundary], arr[right] <span class="op">=</span> arr[right], arr[boundary]
+  boundary
+<span class="kw">end</span></code></pre>
+        </div>
+    </div>
+
+    <h2>Complejidad</h2>
+    <table>
+        <tr><th></th><th>Merge Sort</th><th>Quick Sort</th></tr>
+        <tr><td><strong>Tiempo promedio</strong></td><td>O(n log n)</td><td>O(n log n)</td></tr>
+        <tr><td><strong>Peor caso</strong></td><td>O(n log n) — siempre</td><td>O(n^2) — array ordenado + mal pivot</td></tr>
+        <tr><td><strong>Espacio</strong></td><td>O(n) — array auxiliar en merge</td><td>O(log n) — in-place (stack recursion)</td></tr>
+        <tr><td><strong>Estable?</strong></td><td>Si</td><td>No</td></tr>
+        <tr><td><strong>In-place?</strong></td><td>No</td><td>Si</td></tr>
+    </table>
+
+    <div class="two-col">
+        <div class="card">
+            <h3>A Favor</h3>
+            <ul>
+                <li>Rendimiento garantizado O(n log n)</li>
+                <li>Estable (preserva orden de elementos iguales)</li>
+                <li>Predecible: sin variacion por datos de entrada</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>A Favor</h3>
+            <ul>
+                <li>In-place: O(1) espacio extra en particion</li>
+                <li>Cache-friendly: acceso secuencial</li>
+                <li>En la practica, suele ser mas rapido que Merge Sort</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>En Contra</h3>
+            <ul>
+                <li>Requiere O(n) memoria extra</li>
+                <li>Mas lento en la practica que Quick Sort (allocations)</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>En Contra</h3>
+            <ul>
+                <li>Peor caso O(n^2) con pivot ingenuo</li>
+                <li>No estable</li>
+                <li>Stack overflow posible en arrays grandes</li>
+            </ul>
+        </div>
+    </div>
+
+    <h2>Mejoras a Quick Sort</h2>
+    <div class="card">
+        <p><strong>Pivot aleatorio:</strong> <code>pivot = arr[rand(lo..hi)]</code> — evita el peor caso en la practica.</p>
+        <p><strong>Mediana de tres:</strong> elegir pivot como la mediana de <code>arr[lo]</code>, <code>arr[mid]</code>, <code>arr[hi]</code>.</p>
+        <p><strong>Hoare partition:</strong> alternativa a Lomuto que hace ~3x menos swaps (usada en implementaciones reales).</p>
+    </div>
+
+    <h2>Arbol de Decision</h2>
+    <div class="card">
+        <p><strong>Usa Merge Sort cuando:</strong></p>
+        <ul>
+            <li>La estabilidad es critica (ej: ordenar por fecha manteniendo prioridad)</li>
+            <li>El peor caso debe ser garantizado O(n log n)</li>
+            <li>La memoria no es una restriccion (arrays pequenos o mucha RAM)</li>
+        </ul>
+        <p><strong>Usa Quick Sort cuando:</strong></p>
+        <ul>
+            <li>La memoria es limitada (embedded, sistemas con restricciones)</li>
+            <li>Rendimiento bruto importa mas que estabilidad</li>
+            <li>Los datos son aleatorios o puedes randomizar el pivot</li>
+        </ul>
+    </div>
+
+    <h2>Problemas Practica</h2>
+    <table>
+        <tr><th>Problema</th><th>Dificultad</th><th>Patron</th></tr>
+        <tr><td>LC 912 — Sort an Array</td><td>Medium</td><td>Implementar merge sort o quick sort</td></tr>
+        <tr><td>LC 148 — Sort List</td><td>Medium</td><td>Merge Sort en linked list O(1) espacio</td></tr>
+        <tr><td>LC 75 — Sort Colors</td><td>Medium</td><td>Quick Sort particion (Dutch National Flag)</td></tr>
+        <tr><td>LC 56 — Merge Intervals</td><td>Medium</td><td>Ordenar + merge</td></tr>
+    </table>
+
+    <div class="footer">
+        <p>Leccion: <code>lessons/0016-merge-sort-quick-sort.html</code></p>
+    </div>
+
+</div>
+</body>
+</html>

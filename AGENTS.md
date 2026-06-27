@@ -1,6 +1,6 @@
 # DSA en Ruby — Self-Study Course Repo
 
-**What this is:** A 12-week self-paced Data Structures & Algorithms course in Ruby (~180h total), managed by OpenCode's `course-manager` ecosystem. Currently at: Week 2, Day 4 (Two Pointers).
+**What this is:** A 12-week self-paced Data Structures & Algorithms course in Ruby (~180h total), managed by OpenCode's `course-manager` ecosystem. Currently at: Week 6, Day 1 (Sorting Algorithms).
 
 ## Required: Load the mentor skill
 Before any study session, load the `course-mentor` skill via the skill tool. It enforces the Socratic protocol and manages session flow.

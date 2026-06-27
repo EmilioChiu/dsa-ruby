@@ -1,20 +1,20 @@
 {
   "course": "DSA en Ruby - De Cero a Entrevistado",
   "created_at": "2026-05-05T00:00:00-06:00",
-  "current_milestone": "w5d5",
-  "current_week": 5,
-  "completed_milestones": ["w1d1", "w1d2", "w1d3", "w1d4", "w1d5", "w2d1", "w2d2", "w2d3", "w2d4", "w2d5", "w3d1", "w3d2", "w3d3", "w3d4", "w3d5", "w4d1", "w4d2", "w4d3", "w4d4", "w4d5", "w5d1", "w5d2", "w5d3", "w5d4"],
+  "current_milestone": "w6d1",
+  "current_week": 6,
+  "completed_milestones": ["w1d1", "w1d2", "w1d3", "w1d4", "w1d5", "w2d1", "w2d2", "w2d3", "w2d4", "w2d5", "w3d1", "w3d2", "w3d3", "w3d4", "w3d5", "w4d1", "w4d2", "w4d3", "w4d4", "w4d5", "w5d1", "w5d2", "w5d3", "w5d4", "w5d5", "w6d1"],
   "total_milestones": 60,
   "total_problems": 250,
-  "problems_solved": 70,
-  "streak": 22,
-  "last_session": "2026-06-25T12:00:00-06:00",
+  "problems_solved": 73,
+  "streak": 23,
+  "last_session": "2026-06-26T12:00:00-06:00",
   "milestones_by_status": {
-    "locked": 37,
+    "locked": 34,
     "in_progress": 0,
-    "completed": 23
+    "completed": 26
   },
-  "next_milestone": "w5d5 (Milestone 5 - BS exam)",
+  "next_milestone": "w6d2 (Custom Sort Patterns)",
   "debt_entries": [
     {
       "id": "debt-001",
@@ -32,9 +32,9 @@
       "description": "Confusion sobre que patron de while usar segun el caso. Duda sobre como afecta el manejo de boundaries (mid vs mid-1, right = mid vs right = mid-1). Necesita practicar identificando cuando un patron lleva a loop infinito y cuando no.",
       "severity": "Medium",
       "recorded_at": "2026-06-25T18:00:00-06:00",
-      "resolved_at": null,
-      "warmups_completed": 0,
-      "status": "open"
+      "resolved_at": "2026-06-26T12:00:00-06:00",
+      "warmups_completed": 1,
+      "status": "resolved"
     }
   ]
 }

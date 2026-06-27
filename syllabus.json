@@ -5,8 +5,8 @@
   "total_sessions": 60,
   "total_hours": 180,
   "language": "Ruby",
-  "streak": 1,
-  "last_session": "2026-05-07T09:00:00-06:00",
+  "streak": 23,
+  "last_session": "2026-06-26T12:00:00-06:00",
   "schedule_pattern": "Monday-Friday 9:00-12:00 CST",
   "modules": [
     {
@@ -290,7 +290,7 @@
         {
           "id": "w5d3",
           "label": "BS en rotated array",
-          "status": "locked",
+          "status": "completed",
           "prerequisites": ["w5d1"],
           "bloom_level": "Apply",
           "topics": ["BS con pivot", "Buscar en array rotado"],
@@ -331,7 +331,7 @@
         {
           "id": "w6d1",
           "label": "Sorting Algorithms",
-          "status": "locked",
+          "status": "completed",
           "prerequisites": ["w5d5"],
           "bloom_level": "Understand",
           "topics": ["Merge Sort", "Quick Sort", "Complejidad de cada uno"],

@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leccion 0016: Merge Sort & Quick Sort</title>
+    <style>
+        :root {
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --line: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+        }
+        @media (min-width: 640px) {
+            body { padding: 3rem 1.5rem; }
+            .container { padding: 3rem 2.5rem; }
+        }
+        @media print {
+            body { padding: 0.5in; background: white; }
+            .container { box-shadow: none; padding: 0; }
+            .step-visual, .quiz-box, .algo-card { break-inside: avoid; }
+        }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            color: var(--text);
+            margin-bottom: .5rem;
+        }
+        h1 .badge {
+            display: inline-block;
+            font-size: .7rem;
+            font-weight: 600;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: .2rem .6rem;
+            border-radius: 999px;
+            vertical-align: middle;
+            margin-left: .5rem;
+        }
+        .subtitle {
+            font-size: 1.05rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+        h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 2.2rem;
+            margin-bottom: .75rem;
+            color: var(--text);
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: .35rem;
+        }
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: .5rem;
+            color: #334155;
+        }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-bottom: 1rem; padding-left: 1.25rem; }
+        li { margin-bottom: .4rem; }
+
+        .callout {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout strong { color: var(--accent); }
+        .callout-warn {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout-warn strong { color: #b45309; }
+        .callout-success {
+            background: #d1fae5;
+            border-left: 4px solid #22c55e;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+        .callout-success strong { color: #047857; }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem 1.5rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+            font-size: .82rem;
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+            tab-size: 2;
+        }
+        pre .kw  { color: #c084fc; }
+        pre .op  { color: #f472b6; }
+        pre .cm  { color: #6b7280; font-style: italic; }
+        pre .str { color: #34d399; }
+        pre .num { color: #fbbf24; }
+        pre .fn  { color: #60a5fa; }
+        pre .ty  { color: #22d3ee; }
+
+        code:not(pre code) {
+            background: #f1f5f9;
+            color: #1e293b;
+            padding: .15em .4em;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: .85em;
+        }
+
+        .algo-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: #fafafa;
+        }
+        .algo-card h3 {
+            margin-top: 0;
+            font-size: 1.05rem;
+        }
+        .algo-card .complexity {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: .75rem 0;
+            font-size: .85rem;
+        }
+        .algo-card .complexity span {
+            background: #f1f5f9;
+            padding: .3rem .7rem;
+            border-radius: 6px;
+        }
+        .algo-card .complexity .time { border-left: 3px solid #2563eb; }
+        .algo-card .complexity .space { border-left: 3px solid #22c55e; }
+
+        .step-visual {
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            font-size: .9rem;
+            overflow-x: auto;
+        }
+        .array-vis {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .35rem;
+            margin: .6rem 0;
+            align-items: center;
+        }
+        .array-vis .elem {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            padding: .3rem .55rem;
+            border-radius: 4px;
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            min-width: 1.8rem;
+            text-align: center;
+        }
+        .array-vis .elem.sorted { background: #d1fae5; border-color: #6ee7b7; color: #047857; }
+        .array-vis .elem.pivot { background: #fef3c7; border-color: #fbbf24; color: #b45309; font-weight: 700; }
+        .array-vis .elem.dividing { background: #dbeafe; border-color: #93c5fd; }
+        .array-vis .elem.merge { background: #f3e8ff; border-color: #c084fc; }
+        .array-vis .divider {
+            color: #94a3b8;
+            font-size: .85rem;
+            padding: 0 .15rem;
+        }
+        .array-vis .label {
+            font-size: .7rem;
+            color: #64748b;
+            margin-right: .3rem;
+        }
+
+        .quiz-box {
+            background: #fafafa;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        .quiz-box .q-num {
+            display: inline-block;
+            font-size: .7rem;
+            font-weight: 700;
+            color: white;
+            background: var(--accent);
+            padding: .15rem .5rem;
+            border-radius: 999px;
+            margin-bottom: .5rem;
+        }
+        .quiz-box h3 {
+            margin-top: 0;
+            font-size: .95rem;
+        }
+        .quiz-box .options {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            margin-bottom: 1rem;
+        }
+        .quiz-box .option {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .5rem .75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: .88rem;
+            transition: all .15s;
+        }
+        .quiz-box .option:hover { border-color: var(--accent); background: var(--accent-light); }
+        .quiz-box .option input[type="radio"] { accent-color: var(--accent); }
+        .quiz-box .option.correct { border-color: #22c55e; background: #d1fae5; }
+        .quiz-box .option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-box .feedback {
+            display: none;
+            padding: .75rem 1rem;
+            border-radius: 6px;
+            margin-top: .5rem;
+            font-size: .9rem;
+        }
+        .quiz-box .feedback.show { display: block; }
+        .quiz-box .feedback.correct { background: #d1fae5; border-left: 3px solid #22c55e; }
+        .quiz-box .feedback.wrong { background: #fee2e2; border-left: 3px solid #ef4444; }
+        .quiz-box button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: .5rem 1.25rem;
+            border-radius: 6px;
+            font-size: .85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background .15s;
+            margin-top: .5rem;
+        }
+        .quiz-box button:hover { background: #1d4ed8; }
+        .quiz-box button:disabled { background: #94a3b8; cursor: default; }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.25rem;
+            font-size: .88rem;
+        }
+        .compare-table th, .compare-table td {
+            padding: .65rem .75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+        }
+        .compare-table th { background: #f1f5f9; font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; }
+        .compare-table tr:last-child td { border-bottom: none; }
+        .compare-table .best { color: #047857; font-weight: 600; }
+
+        .footer {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--line);
+            font-size: .9rem;
+            color: #64748b;
+            text-align: center;
+        }
+        .footer a { color: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>Merge Sort & Quick Sort <span class="badge">w6d1</span></h1>
+    <p class="subtitle">
+        Dos algoritmos de ordenamiento O(n log n) con estrategias opuestas:
+        dividir y conquistar sin miramientos vs. elegir un lider y partir.
+    </p>
+
+    <h2>1. Por Que Sorting?</h2>
+    <p>
+        Los algoritmos de ordenamiento son la base de multiples problemas de entrevista:
+    </p>
+    <ul>
+        <li><strong>Merge Intervals</strong> (w6d3) requiere ordenar por inicio</li>
+        <li><strong>Top K Frequent</strong> requiere ordenar por frecuencia</li>
+        <li><strong>Binary Search</strong> requiere un array ordenado</li>
+        <li><strong>Two Pointers</strong> suele necesitar ordenamiento previo</li>
+    </ul>
+    <p>
+        Ademas, implementar Merge Sort y Quick Sort desde cero es un clasico
+        de entrevistas para evaluar tu dominio de recursion y particionamiento.
+    </p>
+
+    <h2>2. Merge Sort</h2>
+
+    <div class="algo-card">
+        <h3>Merge Sort: Divide, Conquista, Combina</h3>
+        <div class="complexity">
+            <span class="time"><strong>Tiempo:</strong> O(n log n) — siempre</span>
+            <span class="space"><strong>Espacio:</strong> O(n) — requiere array auxiliar</span>
+        </div>
+        <p><strong>Estrategia:</strong></p>
+        <ol>
+            <li><strong>Divide:</strong> parte el array por la mitad</li>
+            <li><strong>Conquista:</strong> ordena cada mitad recursivamente</li>
+            <li><strong>Combina:</strong> fusiona las dos mitades ordenadas en una sola</li>
+        </ol>
+        <p>La clave esta en la funcion <strong>merge</strong>: recorrer dos arrays ordenados
+        simultaneamente, eligiendo el menor elemento en cada paso.</p>
+    </div>
+
+    <h3>Visualizacion Paso a Paso</h3>
+
+    <div class="step-visual">
+        <strong>Array inicial:</strong> [38, 27, 43, 3, 9, 82, 10]
+        <div class="array-vis">
+            <span class="elem">38</span><span class="elem">27</span>
+            <span class="elem">43</span><span class="elem">3</span>
+            <span class="elem">9</span><span class="elem">82</span>
+            <span class="elem">10</span>
+        </div>
+    </div>
+
+    <div class="step-visual">
+        <strong>Paso 1 — Divide:</strong>
+        <div class="array-vis">
+            <span class="elem dividing">38</span><span class="elem dividing">27</span>
+            <span class="elem dividing">43</span><span class="elem dividing">3</span>
+            <span class="label">|</span>
+            <span class="elem">9</span><span class="elem">82</span>
+            <span class="elem">10</span>
+        </div>
+        <p>Partimos en <code>left = [38, 27, 43, 3]</code> y <code>right = [9, 82, 10]</code></p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Paso 2 — Sigue dividiendo hasta tener arrays de 1 elemento:</strong>
+        <div class="array-vis">
+            <span class="elem">38</span><span class="divider">|</span>
+            <span class="elem">27</span><span class="divider">|</span>
+            <span class="elem">43</span><span class="divider">|</span>
+            <span class="elem">3</span><span class="divider">|</span>
+            <span class="elem">9</span><span class="divider">|</span>
+            <span class="elem">82</span><span class="divider">|</span>
+            <span class="elem">10</span>
+        </div>
+        <p>Cada elemento solo es un array ordenado (trivialmente).</p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Paso 3 — Merge (combina):</strong>
+        <div class="array-vis">
+            <span class="elem">27</span><span class="elem">38</span>
+            <span class="divider">|</span>
+            <span class="elem">3</span><span class="elem">43</span>
+            <span class="divider">|</span>
+            <span class="elem">9</span><span class="elem">82</span>
+            <span class="divider">|</span>
+            <span class="elem">10</span>
+        </div>
+        <p>Fusionamos pares: (38,27) &rarr; [27,38]; (43,3) &rarr; [3,43]; (9,82) &rarr; [9,82]; (10) queda solo.</p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Paso 4 — Sigue fusionando:</strong>
+        <div class="array-vis">
+            <span class="elem sorted">3</span><span class="elem sorted">27</span>
+            <span class="elem sorted">38</span><span class="elem sorted">43</span>
+            <span class="divider">|</span>
+            <span class="elem sorted">9</span><span class="elem sorted">10</span>
+            <span class="elem sorted">82</span>
+        </div>
+        <p>Fusionamos [27,38] + [3,43] &rarr; [3,27,38,43]; y [9,82] + [10] &rarr; [9,10,82]</p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Paso 5 — Fusion final:</strong>
+        <div class="array-vis">
+            <span class="elem sorted">3</span><span class="elem sorted">9</span>
+            <span class="elem sorted">10</span><span class="elem sorted">27</span>
+            <span class="elem sorted">38</span><span class="elem sorted">43</span>
+            <span class="elem sorted">82</span>
+        </div>
+        <p>Resultado: [3, 9, 10, 27, 38, 43, 82]</p>
+    </div>
+
+    <h3>Implementacion en Ruby</h3>
+
+    <pre><code><span class="kw">def</span> <span class="fn">merge_sort</span>(arr)
+  <span class="kw">return</span> arr <span class="kw">if</span> arr.length <span class="op">&lt;=</span> <span class="num">1</span>
+
+  mid <span class="op">=</span> arr.length <span class="op">/</span> <span class="num">2</span>
+  left_half  <span class="op">=</span> <span class="fn">merge_sort</span>(arr[<span class="num">0</span><span class="op">...</span>mid])
+  right_half <span class="op">=</span> <span class="fn">merge_sort</span>(arr[mid<span class="op">..</span>])
+
+  <span class="fn">merge</span>(left_half, right_half)
+<span class="kw">end</span>
+
+<span class="kw">def</span> <span class="fn">merge</span>(left_half, right_half)
+  result <span class="op">=</span> []
+  left_index <span class="op">=</span> <span class="num">0</span>
+  right_index <span class="op">=</span> <span class="num">0</span>
+
+  <span class="kw">while</span> left_index <span class="op">&lt;</span> left_half.length <span class="op">&amp;&amp;</span> right_index <span class="op">&lt;</span> right_half.length
+    <span class="kw">if</span> left_half[left_index] <span class="op">&lt;=</span> right_half[right_index]
+      result <span class="op">&lt;&lt;</span> left_half[left_index]
+      left_index <span class="op">+=</span> <span class="num">1</span>
+    <span class="kw">else</span>
+      result <span class="op">&lt;&lt;</span> right_half[right_index]
+      right_index <span class="op">+=</span> <span class="num">1</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  <span class="co"># Unir los elementos restantes (solo uno de los dos tiene sobrantes)</span>
+  result <span class="op">+=</span> left_half[left_index<span class="op">..</span>] <span class="op">+</span> right_half[right_index<span class="op">..</span>]
+  result
+<span class="kw">end</span></code></pre>
+
+    <div class="callout">
+        <strong>Detalle clave:</strong> <code>arr[0...mid]</code> excluye el indice <code>mid</code>
+        (rango exclusivo), mientras <code>arr[mid..]</code> incluye desde <code>mid</code> hasta el final.
+        Esto asegura que no se pierdan elementos.
+    </div>
+
+    <h2>3. Quick Sort</h2>
+
+    <div class="algo-card">
+        <h3>Quick Sort: Elige un Pivot, Particiona, Repite</h3>
+        <div class="complexity">
+            <span class="time"><strong>Tiempo:</strong> O(n log n) promedio, O(n^2) peor caso</span>
+            <span class="space"><strong>Espacio:</strong> O(log n) — in-place con recursion (stack)</span>
+        </div>
+        <p><strong>Estrategia:</strong></p>
+        <ol>
+            <li><strong>Elige un pivot</strong> (tipicamente el ultimo elemento)</li>
+            <li><strong>Particiona:</strong> mueve elementos menores que el pivot a la izquierda, mayores a la derecha</li>
+            <li><strong>Recurre:</strong> aplica Quick Sort a las dos particiones</li>
+        </ol>
+        <p>La clave esta en la funcion <strong>partition</strong>: colocar el pivot en su posicion final
+        tal que todo a su izquierda es menor o igual, y todo a su derecha es mayor.</p>
+    </div>
+
+    <h3>Visualizacion: Particion (Lomuto)</h3>
+
+    <div class="step-visual">
+        <strong>Array:</strong> [10, 7, 8, 9, 1, 5]
+        <div class="array-vis">
+            <span class="elem">10</span><span class="elem">7</span>
+            <span class="elem">8</span><span class="elem">9</span>
+            <span class="elem">1</span><span class="elem pivot">5</span>
+        </div>
+        <p>Pivot = ultimo elemento: <span class="elem pivot" style="display:inline-block;padding:.15rem .4rem;font-size:.8rem;">5</span></p>
+    </div>
+
+    <div class="step-visual">
+        <strong>Particion paso a paso:</strong>
+        <p><code>i = 0</code> (barrera: donde van los menores)<br>
+        <code>j = 0 &rarr; 10 > 5</code> &rarr; no se mueve<br>
+        <code>j = 1 &rarr; 7 > 5</code> &rarr; no se mueve<br>
+        <code>j = 2 &rarr; 8 > 5</code> &rarr; no se mueve<br>
+        <code>j = 3 &rarr; 9 > 5</code> &rarr; no se mueve<br>
+        <code>j = 4 &rarr; 1 &lt;= 5</code> &rarr; <strong>swap!</strong> arr[0]=10 &harr; arr[4]=1. i=1.</p>
+        <div class="array-vis">
+            <span class="elem">1</span><span class="elem">7</span>
+            <span class="elem">8</span><span class="elem">9</span>
+            <span class="elem">10</span><span class="elem pivot">5</span>
+        </div>
+    </div>
+
+    <div class="step-visual">
+        <strong>Colocar pivot en su lugar:</strong>
+        <p>Swap arr[1]=7 &harr; pivot en posicion 5</p>
+        <div class="array-vis">
+            <span class="elem sorted">1</span><span class="elem pivot">5</span>
+            <span class="elem">8</span><span class="elem">9</span>
+            <span class="elem">10</span><span class="elem">7</span>
+        </div>
+        <p>Pivot <span class="elem pivot" style="display:inline-block;padding:.15rem .4rem;font-size:.8rem;">5</span> en posicion final.
+        Izquierda: [1], Derecha: [8, 9, 10, 7] — se repite el proceso.</p>
+    </div>
+
+    <h3>Implementacion en Ruby</h3>
+
+    <pre><code><span class="kw">def</span> <span class="fn">quick_sort</span>(arr, left <span class="op">=</span> <span class="num">0</span>, right <span class="op">=</span> arr.length <span class="op">-</span> <span class="num">1</span>)
+  <span class="kw">return</span> arr <span class="kw">if</span> left <span class="op">&gt;=</span> right
+
+  pivot_index <span class="op">=</span> <span class="fn">partition</span>(arr, left, right)
+  <span class="fn">quick_sort</span>(arr, left, pivot_index <span class="op">-</span> <span class="num">1</span>)
+  <span class="fn">quick_sort</span>(arr, pivot_index <span class="op">+</span> <span class="num">1</span>, right)
+  arr
+<span class="kw">end</span>
+
+<span class="kw">def</span> <span class="fn">partition</span>(arr, left, right)
+  pivot_value <span class="op">=</span> arr[right]
+  boundary <span class="op">=</span> left
+
+  (left<span class="op">...</span>right).<span class="kw">each</span> <span class="kw">do</span> <span class="op">|</span>current<span class="op">|</span>
+    <span class="kw">if</span> arr[current] <span class="op">&lt;=</span> pivot_value
+      arr[boundary], arr[current] <span class="op">=</span> arr[current], arr[boundary]
+      boundary <span class="op">+=</span> <span class="num">1</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  arr[boundary], arr[right] <span class="op">=</span> arr[right], arr[boundary]
+  boundary
+<span class="kw">end</span></code></pre>
+
+    <div class="callout-warn">
+        <strong>Cuidado:</strong> Quick Sort en el <strong>peor caso</strong> (array ya ordenado
+        con pivot = ultimo) es O(n^2). Para mitigarlo, se usa un pivot aleatorio o
+        la estrategia de "mediana de tres".
+    </div>
+
+    <h2>4. Comparacion Directa</h2>
+
+    <table class="compare-table">
+        <tr>
+            <th>Propiedad</th>
+            <th>Merge Sort</th>
+            <th>Quick Sort</th>
+        </tr>
+        <tr>
+            <td>Tiempo promedio</td>
+            <td class="best">O(n log n)</td>
+            <td class="best">O(n log n)</td>
+        </tr>
+        <tr>
+            <td>Peor caso</td>
+            <td class="best">O(n log n) — siempre igual</td>
+            <td>O(n^2) — array ordenado + mal pivot</td>
+        </tr>
+        <tr>
+            <td>Espacio extra</td>
+            <td>O(n) — array auxiliar</td>
+            <td class="best">O(log n) — in-place (stack recursion)</td>
+        </tr>
+        <tr>
+            <td>Estable?</td>
+            <td class="best">Si — preserva orden relativo</td>
+            <td>No — puede reordenar elementos iguales</td>
+        </tr>
+        <tr>
+            <td>In-place?</td>
+            <td>No</td>
+            <td class="best">Si</td>
+        </tr>
+        <tr>
+            <td>Uso tipico</td>
+            <td>Cuando la estabilidad importa o peor caso no es aceptable</td>
+            <td>Cuando el espacio es limitado</td>
+        </tr>
+    </table>
+
+    <h2>5. Ponte a Prueba</h2>
+
+    <div class="quiz-box" id="q1">
+        <span class="q-num">Pregunta 1</span>
+        <h3>Complejidad de Merge Sort</h3>
+        <p>Que complejidad tiene Merge Sort en el peor caso?</p>
+        <div class="options" data-correct="0">
+            <label class="option"><input type="radio" name="pq1" value="0"> O(n log n)</label>
+            <label class="option"><input type="radio" name="pq1" value="1"> O(n^2)</label>
+            <label class="option"><input type="radio" name="pq1" value="2"> O(n)</label>
+            <label class="option"><input type="radio" name="pq1" value="3"> O(log n)</label>
+        </div>
+        <button onclick="checkQ('q1')">Verificar</button>
+        <div class="feedback" id="fbq1"></div>
+    </div>
+
+    <div class="quiz-box" id="q2">
+        <span class="q-num">Pregunta 2</span>
+        <h3>Complejidad de Quick Sort</h3>
+        <p>En que caso Quick Sort se vuelve O(n^2)?</p>
+        <div class="options" data-correct="1">
+            <label class="option"><input type="radio" name="pq2" value="0"> Cuando el array esta vacio</label>
+            <label class="option"><input type="radio" name="pq2" value="1"> Cuando el array ya esta ordenado y el pivot es el ultimo elemento</label>
+            <label class="option"><input type="radio" name="pq2" value="2"> Cuando todos los elementos son iguales</label>
+            <label class="option"><input type="radio" name="pq2" value="3"> Cuando el array tiene 2 elementos</label>
+        </div>
+        <button onclick="checkQ('q2')">Verificar</button>
+        <div class="feedback" id="fbq2"></div>
+    </div>
+
+    <div class="quiz-box" id="q3">
+        <span class="q-num">Pregunta 3</span>
+        <h3>Por que Merge Sort usa O(n) espacio?</h3>
+        <div class="options" data-correct="2">
+            <label class="option"><input type="radio" name="pq3" value="0"> Por la recursion en el call stack</label>
+            <label class="option"><input type="radio" name="pq3" value="1"> Por que crea un nuevo array en cada llamada recursiva</label>
+            <label class="option"><input type="radio" name="pq3" value="2"> Por que la funcion <code>merge</code> crea un array auxiliar del tamaño total</label>
+            <label class="option"><input type="radio" name="pq3" value="3"> Por que guarda una copia de seguridad del original</label>
+        </div>
+        <button onclick="checkQ('q3')">Verificar</button>
+        <div class="feedback" id="fbq3"></div>
+    </div>
+
+    <div class="quiz-box" id="q4">
+        <span class="q-num">Pregunta 4</span>
+        <h3>Quick Sort in-place</h3>
+        <p>Cual es la clave para que Quick Sort sea in-place?</p>
+        <div class="options" data-correct="1">
+            <label class="option"><input type="radio" name="pq4" value="0"> Usa un array auxiliar para mezclar</label>
+            <label class="option"><input type="radio" name="pq4" value="1"> <code>partition</code> reordena los elementos con swaps en el mismo array</label>
+            <label class="option"><input type="radio" name="pq4" value="2"> No usa recursion</label>
+            <label class="option"><input type="radio" name="pq4" value="3"> Devuelve un nuevo array ordenado</label>
+        </div>
+        <button onclick="checkQ('q4')">Verificar</button>
+        <div class="feedback" id="fbq4"></div>
+    </div>
+
+    <div class="quiz-box" id="q5">
+        <span class="q-num">Pregunta 5</span>
+        <h3>Cual elegir?</h3>
+        <p>Tienes que ordenar un array de 10 millones de enteros en un entorno con memoria limitada. Que algoritmo eliges?</p>
+        <div class="options" data-correct="2">
+            <label class="option"><input type="radio" name="pq5" value="0"> Merge Sort — es mas rapido en promedio</label>
+            <label class="option"><input type="radio" name="pq5" value="1"> Bubble Sort — es mas simple</label>
+            <label class="option"><input type="radio" name="pq5" value="2"> Quick Sort — O(log n) espacio vs O(n) de Merge</label>
+            <label class="option"><input type="radio" name="pq5" value="3"> Merge Sort — O(n log n) garantizado</label>
+        </div>
+        <button onclick="checkQ('q5')">Verificar</button>
+        <div class="feedback" id="fbq5"></div>
+    </div>
+
+    <h2>6. Practica</h2>
+
+    <div class="callout-success">
+        <strong>Tu turno:</strong> Implementa ambos algoritmos desde cero
+        en <code>week-06/day-1/practice/</code>.
+        Luego resuelve LeetCode 912 (Sort an Array) usando tu implementacion.
+    </div>
+
+    <div class="footer">
+        <p>Fuentes: <a href="https://visualgo.net/en/sorting">VisuAlgo Sorting</a>
+        &middot; <a href="https://www.bigocheatsheet.com">Big-O Cheatsheet</a></p>
+        <p>Referencia: <code>reference/0007-sorting-cheatsheet.html</code></p>
+        <p>Duda? Preguntale al agente &mdash; para eso esta.</p>
+    </div>
+
+</div>
+
+<script>
+function checkQ(id) {
+    const quiz = document.getElementById(id);
+    const options = quiz.querySelector('.options');
+    const correctVal = options.dataset.correct;
+    const selected = quiz.querySelector('input[type="radio"]:checked');
+    const feedback = document.getElementById('fb' + id);
+    const button = quiz.querySelector('button');
+
+    if (!selected) {
+        feedback.className = 'feedback show wrong';
+        feedback.textContent = 'Selecciona una opcion primero.';
+        return;
+    }
+
+    const labels = quiz.querySelectorAll('.option');
+    labels.forEach(l => l.classList.remove('correct', 'wrong'));
+
+    const isCorrect = selected.value === correctVal;
+    const parentLabel = selected.closest('.option');
+
+    if (isCorrect) {
+        parentLabel.classList.add('correct');
+        feedback.className = 'feedback show correct';
+        feedback.innerHTML = 'Correcto! ' + getExpQ(id);
+    } else {
+        parentLabel.classList.add('wrong');
+        labels.forEach(l => {
+            if (l.querySelector('input').value === correctVal) {
+                l.classList.add('correct');
+            }
+        });
+        feedback.className = 'feedback show wrong';
+        feedback.innerHTML = 'Incorrecto. ' + getExpQ(id);
+    }
+    button.disabled = true;
+    quiz.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+}
+
+function getExpQ(id) {
+    const exps = {
+        'q1': 'Merge Sort siempre hace O(n log n) comparaciones, incluso en el mejor y peor caso. Siempre divide y siempre mergea todo.',
+        'q2': 'Con pivot=ultimo y array ya ordenado, las particiones son desbalanceadas: [1,2,3,4,5] con pivot=5 da particion izquierda de n-1 elementos y derecha de 0. La recursion se vuelve O(n) de profundidad.',
+        'q3': 'La funcion merge() crea un nuevo array result que suma ambos subarrays. En total, en cada nivel de recursion, el espacio auxiliar usado es O(n).',
+        'q4': 'partition() reordena usando swaps en el mismo array. No crea nuevos arrays. Solo usa O(1) espacio extra mas el stack de recursion O(log n).',
+        'q5': 'Con memoria limitada, Quick Sort es mejor: O(log n) espacio vs O(n) de Merge Sort. Aunque Merge Sort garantiza O(n log n), en la practica Quick Sort es mas eficiente en espacio.',
+    };
+    return exps[id] || '';
+}
+</script>
+
+</body>
+</html>
